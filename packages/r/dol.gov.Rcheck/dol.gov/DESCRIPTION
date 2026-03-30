@@ -1,0 +1,19 @@
+Package: dol.gov
+Title: Department of Labor Foreign Labor Disclosure Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Department of Labor foreign labor
+    disclosure data. Covers PERM, H-1B, H-2A, H-2B, CW-1, and prevailing wage
+    programs. Scrapes the DOL performance page for XLSX file links and downloads/
+    parses them into tibbles. Includes LLM context injection via dol_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tibble, xml2, readxl
+NeedsCompilation: no
+Packaged: 2026-03-23 19:06:55 UTC; seanb
+Author: Sean B [aut, cre]
+Maintainer: Sean B <support@scrapeable.com>
+Built: R 4.3.0; ; 2026-03-23 19:07:02 UTC; windows

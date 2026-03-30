@@ -1,0 +1,9 @@
+kr_assets               List all assets
+kr_context              Generate LLM-friendly context for the
+                        kraken.com package
+kr_depth                Order book depth
+kr_ohlc                 Historical OHLC candlestick data
+kr_pairs                List all trading pairs
+kr_spread               Recent spread data
+kr_ticker               Current ticker data for one or more pairs
+kr_trades               Recent trades

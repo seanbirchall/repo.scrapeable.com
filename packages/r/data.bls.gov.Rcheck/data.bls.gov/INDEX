@@ -1,0 +1,16 @@
+bls_catalog             Fetch series catalog metadata
+bls_context             Generate LLM-friendly context for the
+                        data.bls.gov package
+bls_cpi                 Consumer Price Index (CPI-U, All Items, US City
+                        Average)
+bls_earnings            Average Hourly Earnings (private sector,
+                        seasonally adjusted)
+bls_eci                 Employment Cost Index (total compensation,
+                        private)
+bls_indicators          Fetch all major economic indicators in one call
+bls_jolts               Job Openings (JOLTS, total nonfarm)
+bls_payrolls            Total Nonfarm Payrolls (seasonally adjusted)
+bls_ppi                 Producer Price Index (all commodities)
+bls_series              Fetch BLS time series data
+bls_series_bulk         Fetch multiple series with automatic chunking
+bls_unemployment        Unemployment Rate (seasonally adjusted)

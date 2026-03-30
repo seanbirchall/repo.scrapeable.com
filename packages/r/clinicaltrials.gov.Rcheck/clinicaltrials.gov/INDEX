@@ -1,0 +1,11 @@
+ct_adverse_events       Fetch adverse events from a study's results
+ct_context              Generate LLM-friendly context for the
+                        clinicaltrials.gov package
+ct_field_values         Discover available values for a field
+ct_results              Fetch outcome measures from a study's results
+ct_stats                Fetch ClinicalTrials.gov database-wide
+                        statistics
+ct_stats_fields         Fetch value distributions for multiple fields
+                        at once
+ct_studies              Search ClinicalTrials.gov studies
+ct_study                Fetch a single study by NCT ID

@@ -1,0 +1,13 @@
+Package: federalreserve.gov
+Title: Federal Reserve Board Data Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for Federal Reserve Board statistical
+    releases. Treasury yield curve, fed funds rate, commercial paper,
+    bank prime rate. Direct CSV downloads from the primary source.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tidyr, tibble

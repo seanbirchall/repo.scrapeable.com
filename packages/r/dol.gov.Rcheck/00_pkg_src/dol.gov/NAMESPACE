@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(dol_context)
+export(dol_disclosure)
+export(dol_disclosure_all)
+export(dol_files)
+export(dol_program)
+export(dol_program_bulk)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(xml2, read_html)
+importFrom(xml2, xml_find_all)
+importFrom(xml2, xml_attr)

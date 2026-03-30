@@ -1,0 +1,8 @@
+epa_context             Generate LLM-friendly context for the epa.gov
+                        package
+epa_facility            EPA facility registry
+epa_get                 Query any EPA Envirofacts table
+epa_ghg_facility        Greenhouse gas reporting facilities (GHGRP)
+epa_tri_facility        TRI facility information
+epa_tri_release         TRI chemical release quantities
+epa_water_permit        Water discharge permits (PCS/NPDES)

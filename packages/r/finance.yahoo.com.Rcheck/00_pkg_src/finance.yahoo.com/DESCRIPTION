@@ -1,0 +1,19 @@
+Package: finance.yahoo.com
+Title: Yahoo Finance Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained Yahoo Finance client returning tidy tibbles.
+    Covers OHLCV history (all intervals), batch quotes, financial statements,
+    key statistics, options chains, analyst recommendations, institutional/insider
+    holders, earnings, dividends, splits, and company profiles. No xts/zoo
+    dependency. Cookie/crumb auth handled transparently.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+NeedsCompilation: no
+Packaged: 2026-03-25 21:34:09 UTC; seanb
+Author: Sean B [aut, cre]
+Maintainer: Sean B <support@scrapeable.com>

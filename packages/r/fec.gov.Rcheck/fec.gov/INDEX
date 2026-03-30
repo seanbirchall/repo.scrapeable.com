@@ -1,0 +1,14 @@
+fec_candidate_totals    Candidate financial totals
+fec_candidates          Search FEC candidates
+fec_committee_totals    Committee financial totals
+fec_committees          Search FEC committees (PACs, party committees,
+                        campaign committees)
+fec_context             Generate LLM-friendly context for the fec.gov
+                        package
+fec_disbursements       Committee disbursements (Schedule B)
+fec_elections           Election results and candidates by
+                        year/office/state/district
+fec_filings             Search FEC filings
+fec_independent_expenditures
+                        Independent expenditures (Schedule E)
+fec_receipts            Individual contributions (Schedule A)

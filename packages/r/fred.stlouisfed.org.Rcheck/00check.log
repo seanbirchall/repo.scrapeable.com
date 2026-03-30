@@ -1,0 +1,117 @@
+* using log directory 'C:/Users/seanb/OneDrive/Documents/scrapeable.min/packages/r/fred.stlouisfed.org.Rcheck'
+* using R version 4.3.0 (2023-04-21 ucrt)
+* using platform: x86_64-w64-mingw32 (64-bit)
+* R was compiled by
+    gcc.exe (GCC) 12.2.0
+    GNU Fortran (GCC) 12.2.0
+* running under: Windows 11 x64 (build 22631)
+* using session charset: UTF-8
+* using options '--no-examples --no-tests --no-manual'
+* checking for file 'fred.stlouisfed.org/DESCRIPTION' ... OK
+* this is package 'fred.stlouisfed.org' version '0.1.0'
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking whether package 'fred.stlouisfed.org' can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+fred_category: no visible binding for global variable 'name'
+fred_category: no visible binding for global variable 'parent_id'
+fred_category_children: no visible binding for global variable 'name'
+fred_category_children: no visible binding for global variable
+  'parent_id'
+fred_category_series: no visible binding for global variable 'title'
+fred_category_series: no visible binding for global variable
+  'frequency_short'
+fred_category_series: no visible binding for global variable
+  'units_short'
+fred_category_series: no visible binding for global variable
+  'seasonal_adjustment_short'
+fred_category_series: no visible binding for global variable
+  'observation_start'
+fred_category_series: no visible binding for global variable
+  'observation_end'
+fred_category_series: no visible binding for global variable
+  'popularity'
+fred_category_series: no visible binding for global variable 'notes'
+fred_release_series: no visible binding for global variable 'title'
+fred_release_series: no visible binding for global variable
+  'frequency_short'
+fred_release_series: no visible binding for global variable
+  'units_short'
+fred_release_series: no visible binding for global variable
+  'seasonal_adjustment_short'
+fred_release_series: no visible binding for global variable
+  'observation_start'
+fred_release_series: no visible binding for global variable
+  'observation_end'
+fred_release_series: no visible binding for global variable
+  'popularity'
+fred_release_series: no visible binding for global variable 'notes'
+fred_releases: no visible binding for global variable 'name'
+fred_releases: no visible binding for global variable 'press_release'
+fred_releases: no visible binding for global variable 'link'
+fred_releases: no visible binding for global variable 'notes'
+fred_search: no visible binding for global variable 'title'
+fred_search: no visible binding for global variable 'frequency_short'
+fred_search: no visible binding for global variable 'units_short'
+fred_search: no visible binding for global variable
+  'seasonal_adjustment_short'
+fred_search: no visible binding for global variable 'observation_start'
+fred_search: no visible binding for global variable 'observation_end'
+fred_search: no visible binding for global variable 'popularity'
+fred_search: no visible binding for global variable 'notes'
+fred_series: no visible binding for global variable 'value'
+fred_series_info: no visible binding for global variable 'title'
+fred_series_info: no visible binding for global variable
+  'frequency_short'
+fred_series_info: no visible binding for global variable 'units_short'
+fred_series_info: no visible binding for global variable
+  'seasonal_adjustment_short'
+fred_series_info: no visible binding for global variable
+  'observation_start'
+fred_series_info: no visible binding for global variable
+  'observation_end'
+fred_series_info: no visible binding for global variable 'last_updated'
+fred_series_info: no visible binding for global variable 'notes'
+Undefined global functions or variables:
+  frequency_short last_updated link name notes observation_end
+  observation_start parent_id popularity press_release
+  seasonal_adjustment_short title units_short value
+Consider adding
+  importFrom("graphics", "title")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... SKIPPED
+* DONE
+Status: 1 NOTE

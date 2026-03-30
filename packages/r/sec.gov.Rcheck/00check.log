@@ -1,0 +1,124 @@
+* using log directory 'C:/Users/seanb/OneDrive/Documents/scrapeable.min/packages/r/sec.gov.Rcheck'
+* using R version 4.3.0 (2023-04-21 ucrt)
+* using platform: x86_64-w64-mingw32 (64-bit)
+* R was compiled by
+    gcc.exe (GCC) 12.2.0
+    GNU Fortran (GCC) 12.2.0
+* running under: Windows 11 x64 (build 22631)
+* using session charset: UTF-8
+* using options '--no-examples --no-tests --no-manual'
+* checking for file 'sec.gov/DESCRIPTION' ... OK
+* this is package 'sec.gov' version '0.3.0'
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking whether package 'sec.gov' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: package 'dplyr' was built under R version 4.3.3
+  Warning: package 'tidyr' was built under R version 4.3.1
+  Warning: package 'tibble' was built under R version 4.3.1
+See 'C:/Users/seanb/OneDrive/Documents/scrapeable.min/packages/r/sec.gov.Rcheck/00install.out' for details.
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+.filing_docs: no visible binding for global variable 'name'
+.filing_docs: no visible binding for global variable 'size'
+.filing_docs: no visible binding for global variable 'document'
+.filing_docs: no visible binding for global variable 'long_name'
+.filing_docs: no visible binding for global variable 'report_name'
+.filing_docs: no visible binding for global variable 'short_name'
+.filing_docs: no visible binding for global variable 'report_short'
+.filing_docs: no visible binding for global variable 'role'
+.filing_docs: no visible binding for global variable 'report_role'
+.filing_docs: no visible binding for global variable 'category'
+.find_primary: no visible binding for global variable 'category'
+.find_xbrl: no visible binding for global variable 'category'
+.find_xlsx: no visible binding for global variable 'category'
+.parse_13f_zip: no visible binding for global variable 'sequencenumber'
+.parse_ftd_zip : <anonymous>: no visible binding for global variable
+  'settlement_date'
+.parse_ftd_zip : <anonymous>: no visible binding for global variable
+  'quantity_fails'
+.parse_ftd_zip : <anonymous>: no visible binding for global variable
+  'price'
+.parse_insiders_zip: no visible binding for global variable
+  'accession_number'
+print.sec_filing: no visible binding for global variable 'category'
+sec_13fs_bulk: no visible binding for global variable 'href'
+sec_concepts: no visible binding for global variable 'val'
+sec_concepts: no visible binding for global variable 'fy'
+sec_entities: no visible global function definition for 'setNames'
+sec_entities: no visible binding for global variable 'cik'
+sec_entities: no visible binding for global variable 'ticker'
+sec_entities: no visible binding for global variable 'name'
+sec_facts: no visible binding for global variable 'val'
+sec_facts: no visible binding for global variable 'fy'
+sec_filing: no visible binding for global variable 'category'
+sec_filing_table_subsidiary: no visible binding for global variable
+  'description'
+sec_filing_table_subsidiary: no visible binding for global variable
+  'name'
+sec_filing_xbrl_holding: no visible binding for global variable
+  'category'
+sec_filing_xbrl_holding: no visible binding for global variable 'name'
+sec_filing_xbrl_ownership: no visible binding for global variable
+  'category'
+sec_filing_xbrl_ownership: no visible binding for global variable
+  'name'
+sec_frames: no visible binding for global variable 'val'
+sec_frames: no visible binding for global variable 'cik'
+sec_ftds_bulk: no visible binding for global variable 'href'
+sec_insiders_bulk: no visible binding for global variable 'href'
+sec_parsers: no visible binding for global variable 'forms'
+sec_tags: no visible binding for global variable 'tag'
+sec_tags: no visible binding for global variable 'label'
+sec_tags: no visible binding for global variable 'description'
+Undefined global functions or variables:
+  accession_number category cik description document forms fy href
+  label long_name name price quantity_fails report_name report_role
+  report_short role sequencenumber setNames settlement_date short_name
+  size tag ticker val
+Consider adding
+  importFrom("stats", "setNames")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... WARNING
+Undocumented code objects:
+  'sec_filing' 'sec_filing_html' 'sec_filing_table'
+  'sec_filing_table_subsidiary' 'sec_filing_text' 'sec_filing_xbrl'
+  'sec_filing_xbrl_holding' 'sec_filing_xbrl_ownership'
+  'sec_filing_xbrl_segment' 'sec_filing_xlsx' 'sec_parsers'
+All user-level objects in a package should have documentation entries.
+See chapter 'Writing R documentation files' in the 'Writing R
+Extensions' manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... SKIPPED
+* DONE
+Status: 2 WARNINGs, 1 NOTE

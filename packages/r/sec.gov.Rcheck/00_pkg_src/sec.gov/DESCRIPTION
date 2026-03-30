@@ -1,0 +1,19 @@
+Package: sec.gov
+Title: SEC EDGAR Client for R
+Version: 0.3.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: A self-contained client for the SEC EDGAR system. Provides
+    entity resolution, company filings, XBRL facts, bulk datasets, and
+    S3-based filing parsers (XBRL, segments, ownership, holdings,
+    tables, subsidiaries, text, Excel, HTML). All public functions
+    return tibbles with proper types. No database dependencies.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: dplyr, httr2, jsonlite, tibble, tidyr, xml2
+Suggests: readxl
+NeedsCompilation: no
+Packaged: 2026-03-22 15:11:48 UTC; seanb
+Author: Sean B [aut, cre]
+Maintainer: Sean B <support@scrapeable.com>

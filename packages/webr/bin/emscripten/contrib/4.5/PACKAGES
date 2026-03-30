@@ -1,0 +1,167 @@
+Package: api.fda.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: aed5cfb2af05fe417818c4c8ecbd55e1
+
+Package: api.regulations.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 4d255ab31c712d49ce936ffe473af4e4
+
+Package: bankofengland.co.uk
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, xml2, readxl, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 6a5b9e87ccced81f7f1839265bb87cfe
+
+Package: binance.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 7a383ad955d1165254e6ca0ce534af91
+
+Package: bis.org
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, xml2, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 3992c76c5aaa8ade9738eab57af8dcbe
+
+Package: census.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tidyr, tibble
+License: MIT + file LICENSE
+MD5sum: fcee1a437c7f8bb77f88687b295c914c
+
+Package: clinicaltrials.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 923183fa4c568ddd2195e9a7121409a5
+
+Package: coingecko.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 04001eaf48a38442436ca23ac78470e8
+
+Package: data.bls.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 1ee6320dba6e71fa3185ffad3a1ec8a2
+
+Package: data.cdc.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 8a1bd3de6e384bbd3f47b2c811338586
+
+Package: data.cms.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 3c8e878fcbd9481fea3bbb294a35181f
+
+Package: dol.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tibble, xml2, readxl
+License: MIT + file LICENSE
+MD5sum: a55488851bea890db4138ff0ab57e656
+
+Package: ecb.europa.eu
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 2d69030a2434aa43b64995a3633ef7df
+
+Package: epa.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: ef93f36496c45db4c438c2332e2f9b78
+
+Package: fec.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 56b5ec899f3341a10ad69ad3f7432d62
+
+Package: finance.yahoo.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 906c8166311c25cb8e6703e0eceb5448
+
+Package: fred.stlouisfed.org
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 203bbcfaa6d231a576b1492c3967f15e
+
+Package: kraken.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 7fc79a9e760d311fe3ce833fbd97a9ba
+
+Package: macrotrends.net
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, xml2, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 4573a36b9239c7d40597c1ab476b500b
+
+Package: sec.gov
+Version: 0.3.0
+Imports: dplyr, httr2, jsonlite, tibble, tidyr, xml2
+Suggests: readxl
+License: MIT + file LICENSE
+MD5sum: 766625613a97ed1249ac84f1acf2c9fe
+
+Package: stockanalysis.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, xml2, dplyr, tidyr, tibble
+License: MIT + file LICENSE
+MD5sum: cd331422dea5239380dea92b08f1cce4
+
+Package: stooq.com
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: 33231a782e212ae1d049ff465beff0f6
+
+Package: treasury.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: cb25b8d02a65ade50325d05d96c153e2
+
+Package: usaspending.gov
+Version: 0.1.0
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+License: MIT + file LICENSE
+MD5sum: e046c9701aa5199bd3591fa791037f57

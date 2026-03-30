@@ -1,0 +1,12 @@
+fred_category           Fetch FRED category info
+fred_category_children
+                        Fetch child categories
+fred_category_series    Fetch series within a category
+fred_context            Generate LLM-friendly context for the fred
+                        package
+fred_release_series     Fetch series within a release
+fred_releases           Fetch all FRED data releases
+fred_search             Search FRED series by keyword
+fred_series             Fetch FRED time series observations
+fred_series_bulk        Fetch multiple FRED series
+fred_series_info        Fetch FRED series metadata via API

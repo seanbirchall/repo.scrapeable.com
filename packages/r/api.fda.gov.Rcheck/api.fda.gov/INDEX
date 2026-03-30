@@ -1,0 +1,16 @@
+fda_context             Generate LLM-friendly context for the
+                        api.fda.gov package
+fda_device_classification
+                        Search FDA device classifications (510k, PMA,
+                        etc.)
+fda_device_event        Search FDA device adverse event reports (MAUDE)
+fda_device_recall       Search FDA device recalls
+fda_drug_event          Search FDA drug adverse event reports (FAERS)
+fda_drug_event_count    Count drug adverse events by field
+fda_drug_label          Search FDA drug labeling (package inserts)
+fda_drug_ndc            Search the National Drug Code (NDC) directory
+fda_drug_recall         Search FDA drug recall/enforcement actions
+fda_food_event          Search FDA food adverse event reports (CAERS)
+fda_food_recall         Search FDA food recall/enforcement actions
+fda_orange_book         Search FDA approved drug applications (Orange
+                        Book)

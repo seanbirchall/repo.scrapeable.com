@@ -1,0 +1,9 @@
+bn_avg_price            Average price (5-min VWAP)
+bn_context              Generate LLM-friendly context for the
+                        binance.com package
+bn_depth                Order book depth (bids and asks)
+bn_klines               Historical OHLCV candlestick data (klines)
+bn_price                Current price for one or all symbols
+bn_symbols              List all trading pairs
+bn_ticker_24h           24-hour ticker statistics
+bn_trades               Recent trades

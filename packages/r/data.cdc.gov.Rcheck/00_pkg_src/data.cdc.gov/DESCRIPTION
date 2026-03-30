@@ -1,0 +1,17 @@
+Package: data.cdc.gov
+Title: CDC Open Data (Socrata SODA) Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for CDC open data via Socrata SODA API.
+    COVID cases/vaccinations, notifiable diseases (NNDSS), provisional mortality,
+    flu surveillance. SoQL query support. Dataset discovery and column metadata.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble
+NeedsCompilation: no
+Packaged: 2026-03-26 14:57:23 UTC; seanb
+Author: Sean B [aut, cre]
+Maintainer: Sean B <support@scrapeable.com>

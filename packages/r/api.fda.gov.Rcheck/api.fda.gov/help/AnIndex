@@ -1,0 +1,12 @@
+fda_context	fda_context
+fda_device_classification	fda_device_classification
+fda_device_event	fda_device_event
+fda_device_recall	fda_device_recall
+fda_drug_event	fda_drug_event
+fda_drug_event_count	fda_drug_event_count
+fda_drug_label	fda_drug_label
+fda_drug_ndc	fda_drug_ndc
+fda_drug_recall	fda_drug_recall
+fda_food_event	fda_food_event
+fda_food_recall	fda_food_recall
+fda_orange_book	fda_orange_book

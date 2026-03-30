@@ -1,0 +1,10 @@
+sa_balance              Fetch balance sheet data
+sa_balance_quarterly    Fetch quarterly balance sheet
+sa_cashflow             Fetch cash flow statement
+sa_cashflow_quarterly   Fetch quarterly cash flow statement
+sa_context              Generate LLM-friendly context for the
+                        stockanalysis.com package
+sa_financials           Fetch all financial statements for a ticker
+sa_income               Fetch income statement data
+sa_income_quarterly     Fetch quarterly income statement
+sa_ratios               Fetch financial ratios
