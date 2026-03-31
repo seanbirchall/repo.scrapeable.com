@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(estat_context)
+export(estat_data)
+export(estat_gdp)
+export(estat_inflation)
+export(estat_search)
+export(estat_unemployment)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

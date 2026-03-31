@@ -1,0 +1,15 @@
+Package: climatewatchdata.org
+Title: Climate Watch Historical Emissions API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Climate Watch Data API. Fetches historical greenhouse gas emissions by country, sector, and gas.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    dplyr,
+    tibble,
+    jsonlite

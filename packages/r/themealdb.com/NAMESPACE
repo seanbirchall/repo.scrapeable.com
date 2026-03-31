@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(meal_search)
+export(meal_categories)
+export(meal_random)
+export(meal_by_category)
+export(meal_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

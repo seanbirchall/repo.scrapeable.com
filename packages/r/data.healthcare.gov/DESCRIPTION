@@ -1,0 +1,15 @@
+Package: data.healthcare.gov
+Title: Healthcare.gov Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the data.healthcare.gov DKAN API. List and explore CMS healthcare datasets. Includes LLM context injection via hcgov_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

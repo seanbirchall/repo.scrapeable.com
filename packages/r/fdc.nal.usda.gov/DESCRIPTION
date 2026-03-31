@@ -1,0 +1,16 @@
+Package: fdc.nal.usda.gov
+Title: USDA FoodData Central API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the USDA FoodData Central API. Search foods and get nutrient data.
+    Includes LLM context injection via fdc_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

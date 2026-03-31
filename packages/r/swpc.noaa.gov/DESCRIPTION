@@ -1,0 +1,19 @@
+Package: swpc.noaa.gov
+Title: NOAA Space Weather Prediction Center Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the NOAA SWPC API. Provides solar wind
+    plasma data, interplanetary magnetic field measurements, Kp geomagnetic
+    index, and space weather alerts. Includes LLM context injection via
+    swpc_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble
+

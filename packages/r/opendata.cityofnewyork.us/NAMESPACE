@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(nycod_context)
+export(nycod_datasets)
+export(nycod_fetch_all)
+export(nycod_query)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

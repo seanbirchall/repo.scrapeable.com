@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(col_search)
+export(col_taxon)
+export(col_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)
+

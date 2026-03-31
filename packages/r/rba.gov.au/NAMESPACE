@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(rba_table)
+export(rba_exchange_rates)
+export(rba_interest_rates)
+export(rba_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

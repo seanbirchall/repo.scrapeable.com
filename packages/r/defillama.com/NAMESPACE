@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(defi_protocols)
+export(defi_protocol)
+export(defi_tvl_history)
+export(defi_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

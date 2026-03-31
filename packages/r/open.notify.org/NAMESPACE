@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(iss_position)
+export(iss_astronauts)
+export(iss_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(httr2, req_timeout)
+importFrom(jsonlite, fromJSON)

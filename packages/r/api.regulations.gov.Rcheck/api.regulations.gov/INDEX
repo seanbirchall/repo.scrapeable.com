@@ -1,8 +1,0 @@
-regs_comment            Fetch a single comment by ID
-regs_comments           Search public comments on regulations
-regs_context            Generate LLM-friendly context for the
-                        api.regulations.gov package
-regs_docket             Fetch a single docket by ID
-regs_dockets            Search regulatory dockets
-regs_document           Fetch a single document by ID
-regs_documents          Search federal regulatory documents

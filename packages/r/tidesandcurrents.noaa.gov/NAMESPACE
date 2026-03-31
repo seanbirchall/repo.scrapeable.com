@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(tides_water_level)
+export(tides_predictions)
+export(tides_stations)
+export(tides_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)
+

@@ -1,1 +1,4 @@
 tests/
+logs/
+scripts/
+.Rproj.user

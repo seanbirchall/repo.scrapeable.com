@@ -1,0 +1,18 @@
+Package: data.cityofchicago.org
+Title: Chicago Open Data (Socrata SODA) Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Chicago Open Data portal. Browse
+    available datasets and query any dataset using SoQL (Socrata Query
+    Language). Includes LLM context injection via chi_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble
+

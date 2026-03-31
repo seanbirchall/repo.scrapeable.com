@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(spacex_launches)
+export(spacex_latest)
+export(spacex_rockets)
+export(spacex_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

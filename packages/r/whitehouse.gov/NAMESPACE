@@ -1,0 +1,19 @@
+# Hand-maintained NAMESPACE
+
+export(omb_tables)
+export(omb_table)
+export(omb_summary)
+export(omb_gdp_pct)
+export(omb_outlays_by_agency)
+export(omb_debt)
+export(omb_gdp)
+export(omb_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(tidyr, pivot_longer)
+importFrom(readxl, read_excel)

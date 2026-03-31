@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(scb_tables)
+export(scb_metadata)
+export(scb_query)
+export(scb_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(httr2, req_body_json)
+importFrom(jsonlite, fromJSON)

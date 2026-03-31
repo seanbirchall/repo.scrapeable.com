@@ -1,9 +1,0 @@
-stooq_context           Generate LLM-friendly context for the stooq.com
-                        package
-stooq_forex             Fetch forex pair history
-stooq_history           Fetch historical OHLCV price data
-stooq_history_bulk      Fetch multiple symbols at once
-stooq_index             Fetch US index history
-stooq_stock             Fetch US stock history (auto-appends .us
-                        suffix)
-stooq_yield             Fetch US Treasury yield history

@@ -1,0 +1,16 @@
+\name{ripe_whois}
+\alias{ripe_whois}
+\title{WHOIS lookup via RIPE Stat}
+\description{
+WHOIS lookup via RIPE Stat
+}
+\usage{
+ripe_whois(resource)
+}
+\arguments{
+\item{resource}{IP address, prefix, or ASN (e.g. "193.0.6.139", "AS3333")}
+}
+\value{
+tibble: key, value
+}
+

@@ -1,0 +1,87 @@
+#' Look up a gene by symbol
+#'
+#' @param symbol Gene symbol (e.g. "BRCA2", "TP53")
+#' @param species Species (default "homo_sapiens")
+#' @return tibble: one row with id, display_name, species, biotype,
+#'   description, start, end, strand, seq_region_name
+#' @export
+ensembl_gene <- function(symbol, species = "homo_sapiens") {
+  url <- sprintf("%s/lookup/symbol/%s/%s?content-type=application/json",
+                 .ensembl_base, species, symbol)
+  raw <- tryCatch(.fetch_json(url), error = function(e) { warning("Ensembl error: ", e$message); NULL })
+  if (is.null(raw)) return(.schema_gene)
+  tibble(
+    id = raw$id %||% NA_character_, display_name = raw$display_name %||% NA_character_,
+    species = raw$species %||% NA_character_, biotype = raw$biotype %||% NA_character_,
+    description = raw$description %||% NA_character_,
+    start = as.integer(raw$start %||% NA_integer_), end = as.integer(raw$end %||% NA_integer_),
+    strand = as.integer(raw$strand %||% NA_integer_),
+    seq_region_name = raw$seq_region_name %||% NA_character_
+  )
+}
+
+#' Look up a gene by Ensembl ID
+#'
+#' @param id Ensembl ID (e.g. "ENSG00000139618")
+#' @return tibble: same columns as ensembl_gene
+#' @export
+ensembl_lookup <- function(id) {
+  url <- sprintf("%s/lookup/id/%s?content-type=application/json", .ensembl_base, id)
+  raw <- tryCatch(.fetch_json(url), error = function(e) { warning("Ensembl error: ", e$message); NULL })
+  if (is.null(raw)) return(.schema_gene)
+  tibble(
+    id = raw$id %||% NA_character_, display_name = raw$display_name %||% NA_character_,
+    species = raw$species %||% NA_character_, biotype = raw$biotype %||% NA_character_,
+    description = raw$description %||% NA_character_,
+    start = as.integer(raw$start %||% NA_integer_), end = as.integer(raw$end %||% NA_integer_),
+    strand = as.integer(raw$strand %||% NA_integer_),
+    seq_region_name = raw$seq_region_name %||% NA_character_
+  )
+}
+
+#' Get gene sequence
+#'
+#' @param id Ensembl ID
+#' @param type "genomic" (default), "cdna", "cds", "protein"
+#' @return tibble: one row with id, seq (character), molecule_type
+#' @export
+ensembl_sequence <- function(id, type = "genomic") {
+  url <- sprintf("%s/sequence/id/%s?type=%s&content-type=application/json",
+                 .ensembl_base, id, type)
+  raw <- tryCatch(.fetch_json(url), error = function(e) { warning("Ensembl error: ", e$message); NULL })
+  if (is.null(raw)) return(tibble(id = character(), seq = character(), molecule_type = character()))
+  tibble(id = raw$id %||% NA_character_, seq = raw$seq %||% NA_character_,
+         molecule_type = raw$molecule_type %||% NA_character_)
+}
+
+#' Look up variant by rsID
+#'
+#' @param rsid Variant ID (e.g. "rs699")
+#' @param species Species (default "homo_sapiens")
+#' @return tibble: id, consequence_type, alleles, minor_allele, maf
+#' @export
+ensembl_variant <- function(rsid, species = "homo_sapiens") {
+  url <- sprintf("%s/variation/%s/%s?content-type=application/json",
+                 .ensembl_base, species, rsid)
+  raw <- tryCatch(.fetch_json(url), error = function(e) { warning("Ensembl error: ", e$message); NULL })
+  if (is.null(raw)) return(.schema_variant)
+  tibble(
+    id = raw$name %||% NA_character_,
+    consequence_type = raw$most_severe_consequence %||% NA_character_,
+    alleles = paste(vapply(raw$mappings %||% list(), function(m) m$allele_string %||% "", character(1)), collapse = "; "),
+    minor_allele = raw$minor_allele %||% NA_character_,
+    maf = as.numeric(raw$MAF %||% NA_real_)
+  )
+}
+
+#' Generate context
+#' @return Character string (invisibly)
+#' @export
+ensembl_context <- function() {
+  .build_context("rest.ensembl.org", header_lines = c(
+    "# rest.ensembl.org - Ensembl Genomics REST Client for R",
+    "# Auth: none required. Rate limit: 15 req/sec.",
+    "# Gene lookup, sequence retrieval, variant annotation.",
+    "# Species: homo_sapiens, mus_musculus, etc."
+  ))
+}

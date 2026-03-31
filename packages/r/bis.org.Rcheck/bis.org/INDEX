@@ -1,9 +1,0 @@
-bis_cb_assets           Central bank total assets (monthly)
-bis_context             Generate LLM-friendly context for the bis.org
-                        package
-bis_dataflows           List all BIS dataflows (datasets)
-bis_debt_securities     BIS international debt securities outstanding
-bis_exchange_rate       BIS effective exchange rate indices
-bis_get                 Fetch any BIS SDMX dataset
-bis_policy_rate         Central bank policy rates (daily)
-bis_property_prices     BIS residential property price indices

@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(imf_context)
+export(imf_countries)
+export(imf_data)
+export(imf_indicators)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

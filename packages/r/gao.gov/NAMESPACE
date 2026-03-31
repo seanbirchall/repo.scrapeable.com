@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(gao_recent)
+export(gao_recent_all)
+export(gao_report)
+export(gao_search)
+export(gao_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(httr2, req_body_json)
+importFrom(httr2, resp_body_string)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

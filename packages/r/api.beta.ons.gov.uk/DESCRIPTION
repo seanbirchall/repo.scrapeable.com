@@ -1,0 +1,15 @@
+Package: api.beta.ons.gov.uk
+Title: UK Office for National Statistics API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the ONS beta API. Browse datasets, editions, and fetch observation data from the UK Office for National Statistics.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

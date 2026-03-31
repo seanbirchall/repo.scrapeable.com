@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(ecfr_context)
+export(ecfr_search)
+export(ecfr_structure)
+export(ecfr_titles)
+export(ecfr_versions)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

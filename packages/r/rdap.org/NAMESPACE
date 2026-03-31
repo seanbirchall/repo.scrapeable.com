@@ -1,0 +1,13 @@
+export(rdap_domain)
+export(rdap_ip)
+export(rdap_autnum)
+export(rdap_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

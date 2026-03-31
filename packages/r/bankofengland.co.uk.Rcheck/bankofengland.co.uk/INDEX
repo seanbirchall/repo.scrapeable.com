@@ -1,5 +1,0 @@
-boe_bank_rate           Current Bank Rate
-boe_context             Generate LLM-friendly context for the
-                        bankofengland.co.uk package
-boe_millennium          Download BoE Millennium macroeconomic dataset
-boe_yield_curve         Latest UK government yield curve data (daily)

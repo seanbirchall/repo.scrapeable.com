@@ -1,0 +1,18 @@
+Package: federalregister.gov
+Title: Federal Register API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Federal Register API. Search
+    documents (rules, proposed rules, notices, presidential documents),
+    fetch individual documents, list agencies, and browse public inspection
+    documents. Includes LLM context injection via fr_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

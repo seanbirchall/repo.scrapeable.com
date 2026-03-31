@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(gdelt_articles)
+export(gdelt_timeline)
+export(gdelt_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

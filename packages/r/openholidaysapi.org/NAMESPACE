@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(holiday_public)
+export(holiday_school)
+export(holiday_countries)
+export(holiday_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,0 +1,18 @@
+Package: api.osf.io
+Title: Open Science Framework (OSF) API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Open Science Framework API v2.
+    Fetch preprints by provider and search public nodes (projects). Uses
+    JSON:API format. Includes LLM context injection via osf_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble
+

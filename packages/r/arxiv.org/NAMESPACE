@@ -1,0 +1,19 @@
+# Hand-maintained NAMESPACE
+
+export(arxiv_search)
+export(arxiv_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)
+importFrom(xml2, read_xml)
+importFrom(xml2, xml_find_all)
+importFrom(xml2, xml_find_first)
+importFrom(xml2, xml_text)
+importFrom(xml2, xml_attr)
+importFrom(xml2, xml_ns)

@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(ncbi_search)
+export(ncbi_summary)
+export(ncbi_pubmed)
+export(ncbi_genes)
+export(ncbi_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(cagov_context)
+export(cagov_datastore)
+export(cagov_resources)
+export(cagov_search)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(jsonlite, toJSON)
+importFrom(utils, URLencode)

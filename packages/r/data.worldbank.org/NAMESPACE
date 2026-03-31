@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(wb_context)
+export(wb_countries)
+export(wb_data)
+export(wb_indicators)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
