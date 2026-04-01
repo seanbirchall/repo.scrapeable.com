@@ -1,30 +1,37 @@
-# R Client Factory — Standing Instructions
+# R Client Factory — Scout Pass
 
 ## Mission
 Build self-contained R API clients from a CSV manifest (`apis.csv`). Process one row at a time. Each client becomes an R package and a webR package. **Never stop. Never hang. Never prompt for input. If blocked, log it and move to the next row.**
 
 ---
 
-## Status Tracking
-After every row — success or failure — write the outcome back to `apis.csv` by updating the `status` column. Valid values:
-
-| Status | Meaning |
-|---|---|
-| `done` | Full pipeline complete: client + R package + webR package |
-| `done_no_webr` | R package done, webR failed (Docker issue etc.) |
-| `skipped_paywall` | API requires paid subscription |
-| `skipped_auth` | API requires key/OAuth not available in environment |
-| `skipped_unreachable` | Base URL timed out or returned 5xx after 2 attempts |
-| `skipped_exists` | Client already exists in `clients/` or `packages/r/` |
-| `failed_check` | R CMD check returned WARNING or ERROR after one fix attempt |
-| `failed_other` | Any other unrecoverable error |
-
-**Before processing any row**, check the `status` column. If it is already set to any non-empty value — skip it and move to the next row. This makes the runner fully resumable.
-
-Always update `apis.csv` immediately after finishing each row. Also append a one-line summary to `logs/run.log`:
+## CSV Schema
 ```
-2026-01-15 03:42:11 | sec.gov | done | 8 functions
-2026-01-15 03:44:02 | someapi.com | skipped_paywall | requires subscription
+index,domain,prefix,auth,base_url,complexity,scout,repair,deepen,polish,quality,notes
+```
+
+| Column | Values |
+|---|---|
+| `scout` | `todo` \| `done` \| `skipped_paywall` \| `skipped_auth` \| `skipped_unreachable` \| `skipped_exists` \| `failed_check` \| `failed_other` |
+| `repair` | `todo` \| `done` \| *(empty — not applicable)* |
+| `deepen` | `todo` \| `done` \| *(empty — not applicable)* |
+| `polish` | `todo` \| `done` \| *(empty — not applicable)* |
+| `quality` | `none` \| `shallow` \| `good` \| `comprehensive` \| *(empty)* |
+
+**This pass targets**: rows where `scout == "todo"`.
+
+**Before processing any row**: check `scout`. If it is anything other than `todo` — skip it and move to the next row.
+
+After finishing each row, write back to `apis.csv`:
+- `scout` → `done` (or `skipped_*` / `failed_*`)
+- `repair`, `deepen`, `polish` → `todo` (only if scout = `done`)
+- `quality` → initial assessment (`none` / `shallow` / `good` / `comprehensive`)
+- `notes` → update with anything useful discovered
+
+Append a one-line summary to `logs/run.log`:
+```
+2026-01-15 03:42:11 | sec.gov | scout | done | 8 functions | quality=shallow
+2026-01-15 03:44:02 | someapi.com | scout | skipped_paywall | requires subscription
 ```
 
 ---
@@ -43,32 +50,32 @@ If an API requires credentials not available in the environment:
 1. Write the client with `api_key = NULL` as the default parameter
 2. Skip live testing — note `SKIPPED: requires API key` in the test output file
 3. Build and package normally — a correct client with auth params is still valuable
-4. Update `apis.csv` status: `skipped_auth`
+4. Set `scout = skipped_auth`, leave `repair`/`deepen`/`polish` empty
 
 ### Paywalled / Commercial API
 If probing returns 402, 401, or docs indicate paid-only access with no free tier:
 1. Spend no more than **5 minutes** confirming it is paywalled
 2. Write a stub client where `.fetch` raises: `stop("API requires paid subscription. Visit {base_url} to subscribe.")`
-3. Update `apis.csv` status: `skipped_paywall`, add note to `notes` column
+3. Set `scout = skipped_paywall`, add note, leave `repair`/`deepen`/`polish` empty
 4. Move on immediately
 
 ### API Unreachable
 If base URL returns 5xx, connection refused, or times out after **2 attempts**:
-1. Update `apis.csv` status: `skipped_unreachable`
+1. Set `scout = skipped_unreachable`, leave `repair`/`deepen`/`polish` empty
 2. Move to next row immediately
 
 ### R CMD check WARNING or ERROR
 1. Attempt **one fix**
-2. If still failing → update status `failed_check`, log error summary, move on
+2. If still failing → set `scout = failed_check`, log error summary, move on
 
 ### Docker / webR Failure
 If the Docker build step fails for any reason:
-1. Mark status: `done_no_webr`
+1. Set `scout = done` (R package is good), note webR failure in `notes`
 2. Log the Docker error to `logs/run.log`
 3. Move on — never block on webR
 
 ### General Rule
-**Never hang. Never prompt for input. Always write status back to `apis.csv` and move to the next row.**
+**Never hang. Never prompt for input. Always write back to `apis.csv` and move to the next row.**
 
 ---
 
@@ -79,19 +86,16 @@ Before writing any code for a new client, do deep research:
 1. **Check for duplicates** — search `clients/` and `packages/r/` for existing code covering this domain
 2. **Read existing legacy code** — check `R/` directory for old scrape_* files that cover this API
 3. **Research the API thoroughly** — use web search and the official docs (ALWAYS primary source, never 3rd-party wrappers). Identify every endpoint, response format, auth, rate limits, pagination, enums
-4. **Document endpoints** — update the `endpoints` column in `apis.csv` with a summary of discovered endpoints
-5. **Classify** — complex (SEC-like: S3 objects, multiple parsers, file inventories) or simple (FRED-like: JSON with params)
-6. **Then iterate** — write client → test live → fix → test again → package
+4. **Classify** — complex (SEC-like: S3 objects, multiple parsers, file inventories) or simple (FRED-like: JSON with params)
+5. **Then iterate** — write client → test live → fix → test again → package
 
 ### Primary Sources Only
-Always hit the original data source directly. Never go through 3rd-party APIs, aggregators, or proxy services. Every `base_url` in `apis.csv` should be the authoritative source of truth for that data. If a 3rd-party wrapper exists (e.g., tidycensus wraps census.gov), study it for ideas but build against the primary API.
+Always hit the original data source directly. Never go through 3rd-party APIs, aggregators, or proxy services. If a 3rd-party wrapper exists (e.g., tidycensus wraps census.gov), study it for ideas but build against the primary API.
 
 ### Self-Contained Files
 Each client file must work standalone with zero imports from other client files. Define `%||%`, `.fetch`, `.fetch_json`, schemas — everything — locally in each file. When this becomes a package, the file IS the package.
 
 ### API Key Pattern
-For any API that requires a key, always use `api_key = NULL` as the default:
-
 ```r
 #' @param api_key API key for authentication. Required for direct API access.
 #'   Register at {registration_url} for a free key.
@@ -103,7 +107,6 @@ fred_series <- function(series_id, api_key = NULL) {
   .fetch_json(url)
 }
 ```
-
 Never hardcode keys. Never require a key at package load time — only at call time.
 
 ### S3 Object Pattern (Complex APIs Only)
@@ -122,7 +125,7 @@ Define empty tibble schemas with correct column types BEFORE writing any functio
   start_date = as.Date(character()), enrollment = integer()
 )
 ```
-Use these for all empty returns. This prevents bare `tibble()` and documents the contract.
+Use these for all empty returns. Never return bare `tibble()`.
 
 ### Pagination Pattern
 For APIs with cursor/offset pagination, implement a private `._fetch_all()` that loops internally and returns the combined result. The public function handles pagination transparently — the user gets one tibble back.
@@ -138,14 +141,14 @@ Every client MUST have `{prefix}_context()`. This is the single function an LLM 
 
 ## Process Per Row
 
-### 0. Check Status First
-Read `apis.csv`. If this row's `status` is already set (any non-empty value) — skip it and move to the next row.
+### 0. Check scout Column
+Read `apis.csv`. If `scout != "todo"` — skip and move to the next row.
 
 ### 1. Research the API
 - Read any existing code in `clients/` and `R/` directories for this domain
 - Identify: base URL, auth method, rate limits, response format, available endpoints
 - Classify: complex or simple
-- If unreachable after 2 attempts → update status `skipped_unreachable`, move on
+- If unreachable after 2 attempts → set `scout = skipped_unreachable`, move on
 
 ### 2. Write the Client (`clients/{domain}.R`)
 
@@ -154,6 +157,8 @@ Read `apis.csv`. If this row's `status` is already set (any non-empty value) —
 httr2, jsonlite, dplyr, tibble
 ```
 Edge cases only: `xml2` (HTML/XML parsing), `readxl` (Excel), `tidyr` (reshaping)
+
+**All HTTP requests MUST go through httr2.** The environment routes traffic through a proxy that only supports libcurl-based packages (httr2, xml2). Never use `read.csv(url)`, `read.table(url)`, `download.file()`, `url()`, `readLines(url)`, or any other base R function that reads directly from a URL — these bypass libcurl and will fail with CORS or connection errors. Even for plain CSV or Excel files at a remote URL: fetch the raw bytes with httr2 first, write to a temp file, then read locally.
 
 **Naming**: `{prefix}_{noun}()` or `{prefix}_{noun}_{modifier}()`
 - Prefix = short domain identifier (e.g., `yf_`, `fred_`, `sec_`, `census_`)
@@ -190,7 +195,7 @@ Edge cases only: `xml2` (HTML/XML parsing), `readxl` (Excel), `tidyr` (reshaping
 - Run `roxygen2::roxygenise()` to generate man pages
 - `R CMD build` → tarball in `packages/r/`
 - `R CMD check --no-manual --no-examples --no-tests` → must pass (NOTE ok, WARNING/ERROR not ok)
-- If WARNING/ERROR: attempt one fix → if still failing → status `failed_check`, move on
+- If WARNING/ERROR: attempt one fix → if still failing → set `scout = failed_check`, move on
 - `R CMD INSTALL` → verify it loads
 
 ### 5. Package for webR (`packages/webr/`)
@@ -210,10 +215,13 @@ docker run --rm \
     cd /output/bin/emscripten/contrib/${R_VER} && R --vanilla -e "tools::write_PACKAGES(\".\", type=\"mac.binary\")"
   '
 ```
-If Docker fails → status `done_no_webr`, log error, move on.
+If Docker fails → note in `notes`, set `scout = done`, move on.
 
-### 6. Update Status and Move On
-- Update `apis.csv` `status` column for this row
+### 6. Update CSV and Move On
+- `scout` → `done` (or `skipped_*` / `failed_*`)
+- `repair`, `deepen`, `polish` → `todo` (only if `scout = done`)
+- `quality` → honest assessment of what was built
+- `notes` → anything useful for future passes
 - Append one line to `logs/run.log`
 - Move immediately to next row
 
@@ -238,6 +246,7 @@ Use the API's domain name: `sec.gov`, `census.gov`, `fred.stlouisfed.org`, `fina
 - Use 3rd-party APIs or aggregators — always primary source
 - Create a client that already exists
 - Guess at API behavior
+- Use `read.csv(url)`, `read.table(url)`, `download.file()`, `url()`, `readLines(url)`, or any base R function that reads directly from a URL — all requests MUST go through httr2 (fetch with httr2 → temp file → read locally)
 - **Stop and wait for input under any circumstance**
 - **Retry a failing step more than once**
 - **Spend more than 5 minutes on any single blocked API**
@@ -246,15 +255,14 @@ Use the API's domain name: `sec.gov`, `census.gov`, `fred.stlouisfed.org`, `fina
 
 ## CSV Format (`apis.csv`)
 ```
-domain,prefix,auth,base_url,notes,status
-sec.gov,sec,ua_header,https://www.sec.gov,Complex - S3 filing object,done
-fred.stlouisfed.org,fred,api_key,https://api.stlouisfed.org/fred,Simple JSON API,done
-someapi.com,sa,api_key,https://api.someapi.com,,
+index,domain,prefix,auth,base_url,complexity,scout,repair,deepen,polish,quality,notes
+1,sec.gov,sec,ua_header,https://www.sec.gov,complex,done,todo,todo,todo,shallow,S3 filing object
+2,fred.stlouisfed.org,fred,api_key,https://api.stlouisfed.org/fred,simple,todo,,,,, 
 ```
 
 ---
 
-## Lessons Learned (from building 24 packages)
+## Lessons Learned
 
 ### API Archetypes — recognize early, code faster
 
@@ -303,4 +311,4 @@ someapi.com,sa,api_key,https://api.someapi.com,,
 
 ## Begin
 
-Read `apis.csv` now. Find the first row where `status` is `todo`. Process it according to the instructions above. When done, move to the next empty-status row. Continue until all rows are processed or you are stopped.
+Read `apis.csv` now. Find the first row where `scout = "todo"`. Process it according to the instructions above. When done, move to the next `scout = "todo"` row. Continue until all rows are processed or you are stopped.

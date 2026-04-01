@@ -5,33 +5,31 @@ Polish good R API clients to comprehensive quality from a CSV manifest (`apis.cs
 
 ---
 
-## This Pass Targets
-Process only rows where `needs_pass = polish`. Skip everything else.
-
-Typical polish targets:
-- `quality = good` — client is functionally complete but docs are thin, error messages are vague, or context function is incomplete
-- `quality = comprehensive` but `last_phase != polish` — never had a dedicated polish pass
-
----
-
-## CSV Columns (full schema)
+## CSV Schema
 ```
-domain,prefix,auth,base_url,notes,status,quality,last_phase,last_run,needs_pass
+index,domain,prefix,auth,base_url,complexity,scout,repair,deepen,polish,quality,notes
 ```
 
 | Column | Values |
 |---|---|
-| `status` | `done` \| `done_no_webr` \| `skipped_paywall` \| `skipped_auth` \| `skipped_unreachable` \| `skipped_exists` \| `failed_check` \| `failed_other` |
-| `quality` | `none` \| `shallow` \| `good` \| `comprehensive` |
-| `last_phase` | `scout` \| `repair` \| `deepen` \| `polish` |
-| `last_run` | ISO date e.g. `2026-01-15` |
-| `needs_pass` | `repair` \| `deepen` \| `polish` \| `done` \| *(empty)* |
+| `scout` | `done` \| `skipped_*` \| `failed_*` |
+| `repair` | `todo` \| `done` \| *(empty)* |
+| `deepen` | `todo` \| `done` \| *(empty)* |
+| `polish` | `todo` \| `done` \| *(empty — not applicable)* |
+| `quality` | `none` \| `shallow` \| `good` \| `comprehensive` \| *(empty)* |
 
-After finishing each row, update `quality`, `last_phase`, `last_run`, and `needs_pass`.
+**This pass targets**: rows where `deepen == "done" & polish == "todo"`.
 
-Log format (append to `logs/run.log`):
+**Before processing any row**: if `polish != "todo"` — skip and move to the next row.
+
+After finishing each row, write back to `apis.csv`:
+- `polish` → `done`
+- `quality` → final assessment (target: `comprehensive`)
+- `notes` → anything notable, any gaps discovered for future deepen
+
+Append a one-line summary to `logs/run.log`:
 ```
-2026-01-15 08:23:44 | fred.stlouisfed.org | polish | done | improved roxygen, added enum docs, context function complete | quality=comprehensive needs_pass=done
+2026-01-15 08:23:44 | fred.stlouisfed.org | polish | done | context function complete, added enum docs, hardened edge cases | quality=comprehensive
 ```
 
 ---
@@ -45,63 +43,57 @@ Log format (append to `logs/run.log`):
 
 ## Polish Checklist
 
-Work through this checklist for every client. It is ordered — do not skip to later items before earlier ones are done.
+Work through this checklist for every client in order.
 
 ### 1. Context Function (`{prefix}_context()`)
 The context function is the most important thing to get right. An LLM using this package will call it first.
 
-**Check:**
-- [ ] Lists every public function (no orphans)
+- [ ] Lists every public function (no orphans, nothing missing)
 - [ ] For each function: FULL roxygen block + signature line (no body)
 - [ ] Auth method clearly stated at the top
 - [ ] Registration URL for API keys included
 - [ ] Rate limits documented if known
-- [ ] At least 5 example values for key enums/codes (e.g., common series IDs for FRED, popular ticker symbols for Yahoo Finance)
+- [ ] At least 5 example values for key enums/codes (e.g., common series IDs for FRED, popular tickers for Yahoo Finance)
 - [ ] Common workflows described: "To get X, call `{prefix}_y()` then `{prefix}_z()`"
 
-**If any of the above are missing: fix them.**
-
 ### 2. Roxygen Documentation (all public functions)
-For every public function:
 - [ ] `@title` — one line, verb phrase ("Fetch series observations")
 - [ ] `@description` — 1-2 sentences on what it does and when to use it
-- [ ] `@param` — every parameter documented, including type and valid values/range
+- [ ] `@param` — every parameter documented with type and valid values/range
 - [ ] `@return` — describe the tibble: column names, types, what they mean
 - [ ] `@examples` — at least one `\dontrun{}` example with realistic values
 
 ### 3. Error Messages
 - [ ] Auth errors point to the registration URL
 - [ ] Bad parameter values give actionable messages: `stop("series_id must be a non-empty string like 'GDP' or 'UNRATE'")`
-- [ ] HTTP errors include the status code and URL
+- [ ] HTTP errors include status code and URL
 - [ ] Empty result sets return the schema tibble (never NULL, never error)
 
 ### 4. Edge Case Hardening
-Common gaps to check and fix:
-- **Missing columns**: `if ("col" %in% names(df))` before accessing optional fields
-- **Type coercion crashes**: `tryCatch()` around all `as.Date()`, `as.numeric()`, `as.integer()`
-- **NULL/NA propagation**: functions that receive NULL input should give clear errors, not cryptic downstream failures
-- **Empty API response**: returns schema tibble, not `list()` or `NULL`
-- **Single-row responses**: `fromJSON` sometimes returns a named vector instead of a data frame — guard with `as.data.frame()` or `tibble::as_tibble()`
+- [ ] Missing columns: `if ("col" %in% names(df))` before accessing optional fields
+- [ ] Type coercion crashes: `tryCatch()` around all `as.Date()`, `as.numeric()`, `as.integer()`
+- [ ] NULL/NA propagation: functions that receive NULL give clear errors, not cryptic downstream failures
+- [ ] Empty API response: returns schema tibble, not `list()` or `NULL`
+- [ ] Single-row responses: guard with `as.data.frame()` or `tibble::as_tibble()` where `fromJSON` may return a named vector
 
 ### 5. Schemas
 - [ ] Every public function has a corresponding `.schema_*` tibble
 - [ ] All column types are correct (no character where date is expected)
-- [ ] Schema is used for all empty returns
+- [ ] Schema used for all empty returns
 
 ### 6. Function Signatures
 - [ ] Sensible defaults for all optional parameters
-- [ ] `limit` parameters default to a reasonable number (not 10000 — think about rate limits)
+- [ ] `limit` parameters default to a reasonable number
 - [ ] `api_key = NULL` pattern for all auth functions
-- [ ] No positional-only arguments for anything other than the primary identifier
+- [ ] No positional-only arguments other than the primary identifier
 
 ---
 
 ## Failure Modes — Handle These Without Stopping
 
 ### R CMD check Regression from Polish Changes
-If polishing breaks check:
 1. One fix attempt
-2. If still failing → revert polish changes, mark `needs_pass = polish`, log what happened
+2. If still failing → revert polish changes, keep `polish = todo`, log
 3. Move on
 
 ### General Rule
@@ -111,20 +103,20 @@ If polishing breaks check:
 
 ## Process Per Row
 
-### 0. Check needs_pass
-Read `apis.csv`. If `needs_pass != polish` — skip and move to the next row.
+### 0. Check polish Column
+Read `apis.csv`. If `polish != "todo"` — skip and move to the next row.
 
 ### 1. Read the Whole Client
-Read `clients/{domain}.R` top to bottom. Build a mental model:
-- What does each function do?
+Read `clients/{domain}.R` top to bottom. Note:
 - What's missing from the roxygen?
 - Which error messages are vague?
 - Is the context function complete and accurate?
+- Any obvious edge case gaps?
 
 ### 2. Work the Polish Checklist
 Go through the checklist above in order. Make all fixes in `clients/{domain}.R`.
 
-Do NOT add new endpoint functions in this pass — that's deepen's job. If you notice a missing endpoint, note it in the CSV `notes` column and set `needs_pass = deepen` after this pass.
+**Do NOT add new endpoint functions** — that's deepen's job. If you notice a missing endpoint, note it in `notes` and set `deepen = todo` after this pass completes.
 
 ### 3. Run the Test Suite
 - Run `tests/test-{domain}.R` — everything that passed before should still pass
@@ -155,32 +147,28 @@ docker run --rm \
     cd /output/bin/emscripten/contrib/${R_VER} && R --vanilla -e "tools::write_PACKAGES(\".\", type=\"mac.binary\")"
   '
 ```
-If Docker fails → `done_no_webr`, log, move on.
+If Docker fails → note it, set `polish = done`, move on.
 
 ### 6. Update CSV and Move On
-Update these columns:
-- `status` → `done` or `done_no_webr`
-- `quality` → `comprehensive` (if polish checklist complete), `good` (if some items couldn't be completed)
-- `last_phase` → `polish`
-- `last_run` → today's date
-- `needs_pass` → `done` (if comprehensive), `deepen` (if gaps noticed during polish), `polish` (if couldn't complete checklist)
-- `notes` → note any missing endpoints discovered for future deepen pass
-
-Append to `logs/run.log`.
-Move immediately to next row.
+- `polish` → `done`
+- `quality` → `comprehensive` (if checklist complete), `good` (if some items couldn't be completed)
+- `notes` → any missing endpoints discovered → also set `deepen = todo` if so
+- Append to `logs/run.log`
+- Move immediately to next row
 
 ---
 
 ## Anti-patterns (do NOT do these)
-- Add new endpoint functions (that's deepen's job — note it and move on)
-- Touch logic that's working — polish is documentation and error handling, not refactoring
+- Add new endpoint functions (note them, set `deepen = todo`, move on)
+- Touch logic that's working — polish is docs and error handling, not refactoring
 - Return bare `data.frame()` or `tibble()` without column types
 - Use `%>%` (always `|>`)
 - Use xts, zoo, data.table
 - Share code between client files
-- Leave `{prefix}_context()` incomplete or out of date
+- Leave `{prefix}_context()` incomplete
 - Hardcode API keys
 - Use `library()` calls in package R/ files
+- Use `read.csv(url)`, `read.table(url)`, `download.file()`, `url()`, `readLines(url)`, or any base R function that reads directly from a URL — all requests MUST go through httr2
 - **Stop and wait for input**
 - **Retry a failing step more than once**
 - **Spend more than 15 minutes on any single client**
@@ -189,4 +177,4 @@ Move immediately to next row.
 
 ## Begin
 
-Read `apis.csv` now. Find the first row where `needs_pass = polish`. Work the polish checklist, re-package, update the CSV, move to the next. Continue until no `polish` rows remain or you are stopped.
+Read `apis.csv` now. Find the first row where `deepen = "done"` and `polish = "todo"`. Work the polish checklist, re-package, update the CSV, move to the next. Continue until no `polish = "todo"` rows remain or you are stopped.

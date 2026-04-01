@@ -5,34 +5,32 @@ Expand shallow but working R API clients from a CSV manifest (`apis.csv`). Proce
 
 ---
 
-## This Pass Targets
-Process only rows where `needs_pass = deepen`. Skip everything else.
-
-Typical deepen targets:
-- `quality = shallow` — client works but covers only 1-3 endpoints
-- `quality = good` — client works but has obvious gaps (missing pagination, missing filters, missing endpoint families)
-- Scout pass produced a working stub but skipped the harder endpoints
-
----
-
-## CSV Columns (full schema)
+## CSV Schema
 ```
-domain,prefix,auth,base_url,notes,status,quality,last_phase,last_run,needs_pass
+index,domain,prefix,auth,base_url,complexity,scout,repair,deepen,polish,quality,notes
 ```
 
 | Column | Values |
 |---|---|
-| `status` | `done` \| `done_no_webr` \| `skipped_paywall` \| `skipped_auth` \| `skipped_unreachable` \| `skipped_exists` \| `failed_check` \| `failed_other` |
-| `quality` | `none` \| `shallow` \| `good` \| `comprehensive` |
-| `last_phase` | `scout` \| `repair` \| `deepen` \| `polish` |
-| `last_run` | ISO date e.g. `2026-01-15` |
-| `needs_pass` | `repair` \| `deepen` \| `polish` \| `done` \| *(empty)* |
+| `scout` | `done` \| `skipped_*` \| `failed_*` |
+| `repair` | `todo` \| `done` \| *(empty)* |
+| `deepen` | `todo` \| `done` \| *(empty — not applicable)* |
+| `polish` | `todo` \| `done` \| *(empty)* |
+| `quality` | `none` \| `shallow` \| `good` \| `comprehensive` \| *(empty)* |
 
-After finishing each row, update `quality`, `last_phase`, `last_run`, and `needs_pass`.
+**This pass targets**: rows where `repair == "done" & deepen == "todo"`.
 
-Log format (append to `logs/run.log`):
+**Before processing any row**: if `deepen != "todo"` — skip and move to the next row.
+
+After finishing each row, write back to `apis.csv`:
+- `deepen` → `done` (or keep `todo` if expansion was blocked)
+- `quality` → updated assessment
+- `notes` → what was added, what gaps remain
+
+Append a one-line summary to `logs/run.log`:
 ```
-2026-01-15 06:45:11 | fred.stlouisfed.org | deepen | done | added 6 functions (releases, tags, sources, categories) | quality=comprehensive needs_pass=polish
+2026-01-15 06:45:11 | fred.stlouisfed.org | deepen | done | added 6 functions (releases tags sources categories) | quality=comprehensive
+2026-01-15 06:52:03 | otherapi.com | deepen | done | added pagination and 3 filter params | quality=good
 ```
 
 ---
@@ -51,27 +49,25 @@ Before writing anything:
 1. Read `clients/{domain}.R` — list every existing public function
 2. Read `tests/{domain}-output.txt` — what actually produced data?
 3. Read the official API docs — what endpoints exist that the client doesn't cover?
-4. Make a gap list: endpoints in the docs that aren't in the client
+4. Build a gap list: endpoints in the docs not covered by the client
 
-Then prioritize the gap list:
-- **High value**: endpoints that return large datasets, search/filter capabilities, time series
-- **Medium value**: reference/lookup endpoints, metadata
-- **Low value**: admin endpoints, write endpoints, obscure edge-case paths
+Prioritize the gap list:
+- **High value**: large datasets, search/filter, time series, bulk endpoints
+- **Medium value**: reference/lookup, metadata
+- **Low value**: admin, write, obscure edge-case paths
 
 ### What "Comprehensive" Looks Like
-A comprehensive client covers:
-- Every major data-returning endpoint family
+- Every major data-returning endpoint family covered
 - Pagination where the API supports it (user gets one tibble, not page 1)
 - Key filter/query parameters surfaced as function arguments
 - Date range filtering where applicable
 - All common enums/codes documented in schemas or context function
-- `{prefix}_context()` that accurately lists all functions with full roxygen
+- `{prefix}_context()` accurately lists all functions with full roxygen
 
 ### Expansion Patterns
 
-**Adding an endpoint family** (e.g., FRED has series, releases, sources, categories, tags):
+**Adding an endpoint family**:
 ```r
-# Each family gets its own function or small group of functions
 fred_releases <- function(limit = 1000L, offset = 0L, api_key = NULL) { ... }
 fred_release <- function(release_id, api_key = NULL) { ... }
 fred_release_series <- function(release_id, api_key = NULL) { ... }
@@ -79,7 +75,6 @@ fred_release_series <- function(release_id, api_key = NULL) { ... }
 
 **Adding pagination to an existing function**:
 ```r
-# Private paginator
 .fred_fetch_all <- function(url, api_key) {
   results <- list()
   offset <- 0L
@@ -111,17 +106,15 @@ fred_series_search <- function(
 ## Failure Modes — Handle These Without Stopping
 
 ### New Endpoint Fails Live Testing
-If a newly added endpoint 404s or returns unexpected structure:
-1. Check docs — URL may be different than expected
+1. Check docs — URL may differ from expected
 2. One probe attempt to find correct path
-3. If still failing: comment the function out with `# TODO: endpoint unreachable`, add to notes
-4. Move on — don't block the whole client on one endpoint
+3. If still failing: comment the function out with `# TODO: endpoint unreachable`, note in `notes`
+4. Move on — don't block on one endpoint
 
 ### R CMD check Regression
-If adding new functions breaks check:
 1. One fix attempt
-2. If still failing → revert new additions, mark `needs_pass = deepen` to retry
-3. Log what broke
+2. If still failing → revert new additions, keep `deepen = todo`, log
+3. Move on
 
 ### General Rule
 **Never hang. Never prompt for input. Always update csv and move on.**
@@ -131,7 +124,10 @@ If adding new functions breaks check:
 ## Proven Patterns
 
 ### Self-Contained Files
-Each client file must work standalone. Everything defined locally — `%||%`, `.fetch`, `.fetch_json`, schemas, private paginators.
+Everything defined locally — `%||%`, `.fetch`, `.fetch_json`, schemas, private paginators.
+
+### All Requests Through httr2
+The environment routes traffic through a proxy that only supports libcurl-based packages (httr2, xml2). Never use `read.csv(url)`, `read.table(url)`, `download.file()`, `url()`, `readLines(url)`, or any base R function that reads directly from a URL. Even for plain CSV or Excel files: fetch with httr2 → write to temp file → read locally.
 
 ### Schema-First Pattern
 Define schema for every new endpoint before writing the function:
@@ -143,10 +139,10 @@ Define schema for every new endpoint before writing the function:
 ```
 
 ### Pagination Pattern
-For APIs with cursor/offset pagination, `._fetch_all()` loops internally. Public function returns one combined tibble. User never sees pagination.
+`._fetch_all()` loops internally. Public function returns one combined tibble. User never sees pagination.
 
 ### Context Function Pattern
-Update `{prefix}_context()` to include every new function added this pass. Full roxygen block + signature for each. This function is how LLMs discover the package — keep it current.
+Update `{prefix}_context()` to include every new function added this pass. Full roxygen block + signature for each.
 
 ### Common Gotchas
 - **`as.Date()` errors**: Always `tryCatch()`
@@ -158,16 +154,16 @@ Update `{prefix}_context()` to include every new function added this pass. Full 
 
 ## Process Per Row
 
-### 0. Check needs_pass
-Read `apis.csv`. If `needs_pass != deepen` — skip and move to the next row.
+### 0. Check deepen Column
+Read `apis.csv`. If `deepen != "todo"` — skip and move to the next row.
 
 ### 1. Inventory Existing Client
 - Read `clients/{domain}.R` — list all public functions
 - Read `tests/{domain}-output.txt` — confirm what's working
-- Note the current function count
+- Note current function count and coverage
 
 ### 2. Research API Gaps
-- Hit official docs (primary source only — not wrappers)
+- Hit official docs (primary source only)
 - List all endpoint families
 - Cross-reference against existing functions
 - Prioritize: high-value gaps first
@@ -179,16 +175,14 @@ For each gap endpoint (highest value first):
 3. Handle auth, pagination, error cases
 4. Update `{prefix}_context()` to include the new function
 
-Target: move `quality` up by at least one level this pass.
-
 ### 4. Test Live (`tests/test-{domain}.R`)
 - Add test calls for every new function
 - Run full test suite (old + new)
 - Save output to `tests/{domain}-output.txt`
 - Re-assess quality:
-  - `shallow` → only if expansion was severely limited by API
+  - `shallow` → only if severely limited by the API itself
   - `good` → most endpoint families covered
-  - `comprehensive` → full coverage, pagination working, filters working
+  - `comprehensive` → full coverage, pagination, filters working
 
 ### 5. Re-package for R
 - Rebuild from expanded client
@@ -213,18 +207,14 @@ docker run --rm \
     cd /output/bin/emscripten/contrib/${R_VER} && R --vanilla -e "tools::write_PACKAGES(\".\", type=\"mac.binary\")"
   '
 ```
-If Docker fails → `done_no_webr`, log, move on.
+If Docker fails → note it, set `deepen = done`, move on.
 
 ### 7. Update CSV and Move On
-Update these columns:
-- `status` → `done` or `done_no_webr`
+- `deepen` → `done` (or keep `todo` if expansion was blocked/reverted)
 - `quality` → updated assessment
-- `last_phase` → `deepen`
-- `last_run` → today's date
-- `needs_pass` → `deepen` (if still shallow after expansion), `polish` (if good/comprehensive), `done` (if comprehensive and clean)
-
-Append to `logs/run.log`.
-Move immediately to next row.
+- `notes` → what was added, any gaps noticed for future passes
+- Append to `logs/run.log`
+- Move immediately to next row
 
 ---
 
@@ -238,12 +228,13 @@ Move immediately to next row.
 - Share code between client files
 - Hardcode API keys
 - Use 3rd-party APIs — always primary source
+- Use `read.csv(url)`, `read.table(url)`, `download.file()`, `url()`, `readLines(url)`, or any base R function that reads directly from a URL — all requests MUST go through httr2
 - **Stop and wait for input**
 - **Retry a failing step more than once**
-- **Spend more than 10 minutes on any single client** (deepen gets a bit more time than scout)
+- **Spend more than 10 minutes on any single client**
 
 ---
 
 ## Begin
 
-Read `apis.csv` now. Find the first row where `needs_pass = deepen`. Inventory the existing client, find the gaps, expand it, re-package. Update the CSV and move to the next. Continue until no `deepen` rows remain or you are stopped.
+Read `apis.csv` now. Find the first row where `repair = "done"` and `deepen = "todo"`. Inventory the existing client, find the gaps, expand it, re-package. Update the CSV and move to the next. Continue until no `deepen = "todo"` rows remain or you are stopped.
