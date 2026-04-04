@@ -1,0 +1,13 @@
+Package: fhfa.gov
+Title: Federal Housing Finance Agency (FHFA) House Price Index Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for FHFA House Price Index data. Master HPI,
+    state/metro/regional quarterly indexes, annual tract data, and summary tables.
+    All functions return tibbles with typed columns.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, dplyr, tibble

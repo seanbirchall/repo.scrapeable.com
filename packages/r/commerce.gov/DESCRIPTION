@@ -1,0 +1,17 @@
+Package: commerce
+Title: Department of Commerce Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the U.S. Department of Commerce open data endpoints.
+    Provides access to the Enterprise Data Inventory (1964 datasets), CIO governance
+    boards, IT cost savings strategies, and bureau IT leadership directory.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

@@ -1,0 +1,19 @@
+# Hand-maintained NAMESPACE
+
+export(septa_trains)
+export(septa_buses)
+export(septa_alerts)
+export(septa_search)
+export(septa_elevators)
+export(septa_detours)
+export(septa_list)
+export(septa_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(doc_catalog)
+export(doc_search)
+export(doc_governance)
+export(doc_cost_savings)
+export(doc_leadership)
+export(doc_list)
+export(doc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(httr2, req_timeout)
+importFrom(jsonlite, fromJSON)

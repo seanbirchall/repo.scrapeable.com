@@ -1,8 +1,8 @@
 Package: metoffice.gov.uk
-Title: Met Office HadCRUT5 Temperature Data Client
+Title: API Client for metoffice.gov.uk
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for Met Office HadCRUT5 global temperature anomaly data. Provides annual and monthly anomalies from 1850 to present.
+Description: Self-contained API client for metoffice.gov.uk. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

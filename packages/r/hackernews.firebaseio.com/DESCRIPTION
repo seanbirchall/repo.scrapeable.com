@@ -1,9 +1,8 @@
 Package: hackernews.firebaseio.com
-Title: Hacker News API Client
+Title: API Client for hackernews.firebaseio.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained R client for hackernews.firebaseio.com. Includes LLM context
-    injection via hn_context().
+Description: Self-contained API client for hackernews.firebaseio.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

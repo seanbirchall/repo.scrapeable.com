@@ -1,8 +1,8 @@
 Package: courtlistener.com
-Title: CourtListener Legal API Client
+Title: API Client for courtlistener.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the CourtListener API. Search legal opinions and fetch opinion details.
+Description: Self-contained API client for courtlistener.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

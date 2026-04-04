@@ -1,13 +1,16 @@
 Package: stockanalysis.com
-Title: Stock Analysis Financial Statement Data Client for R
+Title: API Client for stockanalysis.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for Stock Analysis financial data. Income
-    statements, balance sheets, cash flows, and ratios. Annual and quarterly.
-    Long-format tibbles for easy analysis.
+Description: Self-contained API client for stockanalysis.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: R (>= 4.1.0)
-Imports: httr2, xml2, dplyr, tidyr, tibble
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble,
+    xml2

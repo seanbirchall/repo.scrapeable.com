@@ -1,0 +1,19 @@
+# Auto-generated NAMESPACE
+
+export(hudu_list)
+export(hudu_fmr)
+export(hudu_search)
+export(hudu_income_limits)
+export(hudu_inspections_public)
+export(hudu_inspections_multifamily)
+export(hudu_fmr_summary)
+export(hudu_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(readxl, read_excel)

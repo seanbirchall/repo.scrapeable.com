@@ -1,9 +1,8 @@
 Package: openlibrary.org
-Title: Open Library API Client
+Title: API Client for openlibrary.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained R client for openlibrary.org. Includes LLM context
-    injection via olib_context().
+Description: Self-contained API client for openlibrary.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

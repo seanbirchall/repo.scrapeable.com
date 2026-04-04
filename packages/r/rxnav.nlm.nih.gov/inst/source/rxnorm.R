@@ -1,3 +1,6 @@
+
+
+
 # rxnav-nlm-nih-gov.R
 # Self-contained RxNorm drug data client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,41 +9,11 @@
 # Auth: none required
 # API: https://rxnav.nlm.nih.gov/REST
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .rx_base <- "https://rxnav.nlm.nih.gov/REST"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
 
 .fetch <- function(url, ext = ".json") {
   tmp <- tempfile(fileext = ext)
@@ -82,6 +55,7 @@ library(tibble)
 #'
 #' @param name Drug name (e.g. "aspirin", "metformin")
 #' @return tibble: rxcui (character)
+#' @export
 rxnorm_rxcui <- function(name) {
   url <- sprintf("%s/rxcui.json?name=%s", .rx_base,
                  utils::URLencode(name, reserved = TRUE))
@@ -102,6 +76,7 @@ rxnorm_rxcui <- function(name) {
 #'
 #' @param name Drug name (e.g. "metformin")
 #' @return tibble: rxcui, name, tty (term type), synonym
+#' @export
 rxnorm_drugs <- function(name) {
   url <- sprintf("%s/drugs.json?name=%s", .rx_base,
                  utils::URLencode(name, reserved = TRUE))
@@ -131,6 +106,7 @@ rxnorm_drugs <- function(name) {
 #'
 #' @param rxcui RxNorm concept ID
 #' @return tibble: one row with rxcui, name, tty, synonym
+#' @export
 rxnorm_properties <- function(rxcui) {
   url <- sprintf("%s/rxcui/%s/properties.json", .rx_base, rxcui)
   raw <- tryCatch(.fetch_json(url), error = function(e) {
@@ -156,6 +132,7 @@ rxnorm_properties <- function(rxcui) {
 #' @param tty Optional term type filter (e.g. "BN" for brand names,
 #'   "SCD" for clinical drugs). Can be a vector.
 #' @return tibble: rxcui, name, tty, synonym
+#' @export
 rxnorm_related <- function(rxcui, tty = NULL) {
   if (!is.null(tty)) {
     tty_str <- paste(tty, collapse = "+")
@@ -190,6 +167,7 @@ rxnorm_related <- function(rxcui, tty = NULL) {
 #'
 #' @param name Misspelled drug name
 #' @return tibble: suggestion (character)
+#' @export
 rxnorm_spelling <- function(name) {
   url <- sprintf("%s/spellingsuggestions.json?name=%s", .rx_base,
                  utils::URLencode(name, reserved = TRUE))
@@ -212,6 +190,7 @@ rxnorm_spelling <- function(name) {
 #' @param source Classification source: "ATC", "VA", "MESH", "MEDRT".
 #'   Default "ATC".
 #' @return tibble: class_id, class_name, class_type, rxcui, drug_name
+#' @export
 rxnorm_class <- function(rxcui, source = "ATC") {
   url <- sprintf("%s/rxclass/class/byRxcui.json?rxcui=%s&relaSource=%s",
                  .rx_base, rxcui, source)
@@ -235,18 +214,44 @@ rxnorm_class <- function(rxcui, source = "ATC") {
 
 # == Context ===================================================================
 
-#' Generate context for the RxNorm package
-#' @return Character string (invisibly)
+#' Generate LLM-friendly context for rxnav.nlm.nih.gov
+#'
+#' @return Character string with full function signatures and bodies
+#' @export
 rxnorm_context <- function() {
-  .build_context("rxnav.nlm.nih.gov", header_lines = c(
-    "# rxnav.nlm.nih.gov - RxNorm Drug Data Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: none required",
-    "# All functions return tibbles.",
-    "#",
-    "# TTY codes: IN=Ingredient, BN=Brand Name, SCD=Clinical Drug,",
-    "#   SBD=Branded Drug, DF=Dose Form, MIN=Multi-Ingredient",
-    "#",
-    "# Workflow: rxnorm_rxcui('aspirin') -> rxnorm_related(rxcui) -> rxnorm_class(rxcui)"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/rxnav.nlm.nih.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# rxnav.nlm.nih.gov context - source not found\n")
+    return(invisible("# rxnav.nlm.nih.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

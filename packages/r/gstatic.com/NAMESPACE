@@ -1,7 +1,9 @@
 # Hand-maintained NAMESPACE
 
 export(gcpip_ranges)
-export(gcpip_context)
+export(gcpip_services)
+export(gcpip_regions)
+export(gstatic_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -10,4 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

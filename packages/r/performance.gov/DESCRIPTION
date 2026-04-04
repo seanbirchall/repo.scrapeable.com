@@ -1,0 +1,17 @@
+Package: performance.gov
+Title: R Client for Performance.gov CX/HISP Data
+Version: 0.1.0
+Authors@R: person("Scrapeable", email = "support@scrapeable.com", role = c("aut", "cre"))
+Description: Access U.S. federal Customer Experience (CX) and High Impact Service
+    Provider (HISP) data from Performance.gov. Provides functions to retrieve
+    service provider details, CX survey results, and quarterly collection
+    summaries as typed tibbles.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

@@ -2,6 +2,8 @@
 
 export(lei_search)
 export(lei_record)
+export(lei_relationships)
+export(lei_by_country)
 export(lei_context)
 
 import(dplyr)
@@ -11,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

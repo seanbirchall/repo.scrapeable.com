@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(pdb_entry)
+export(pdb_search)
+export(pdb_polymer)
+export(pdb_search_enriched)
+export(pdb_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -1,0 +1,14 @@
+Package: nycgovparks.org
+Title: NYC Parks Department Facilities, Events and Projects Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for NYC Department of Parks & Recreation
+    JSON feeds. Browse 24 facility directories (pools, playgrounds, dog runs,
+    etc.), upcoming events, capital projects, historical signs, public art,
+    press releases, and park closures. All functions return tibbles.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

@@ -1,8 +1,8 @@
 Package: loc.gov
-Title: Library of Congress API Client
+Title: API Client for loc.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Library of Congress JSON API. Covers search, collections listing, and item details.
+Description: Self-contained API client for loc.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

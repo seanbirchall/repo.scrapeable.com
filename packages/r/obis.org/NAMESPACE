@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(obis_occurrence)
+export(obis_taxon)
+export(obis_checklist)
+export(obis_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

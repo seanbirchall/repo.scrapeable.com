@@ -1,5 +1,9 @@
+# Hand-maintained NAMESPACE
+
 export(olib_search)
 export(olib_book)
+export(olib_author)
+export(olib_subject)
 export(olib_context)
 
 import(dplyr)
@@ -9,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

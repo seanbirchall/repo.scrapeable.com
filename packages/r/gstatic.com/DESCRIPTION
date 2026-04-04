@@ -1,8 +1,8 @@
 Package: gstatic.com
-Title: Google Cloud IP Address Ranges Client
+Title: API Client for gstatic.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for Google Cloud IP address ranges. Filter by service and scope/region.
+Description: Self-contained API client for gstatic.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

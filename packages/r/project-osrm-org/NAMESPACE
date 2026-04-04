@@ -1,0 +1,14 @@
+# Auto-generated NAMESPACE
+
+export(osrm_route)
+export(osrm_table)
+export(osrm_nearest)
+export(osrm_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

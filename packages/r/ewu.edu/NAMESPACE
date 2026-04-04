@@ -1,0 +1,19 @@
+# Hand-maintained NAMESPACE
+
+export(spokane_indicators)
+export(spokane_data)
+export(spokane_search)
+export(spokane_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(xml2, read_html)
+importFrom(xml2, xml_find_all)
+importFrom(xml2, xml_attr)
+importFrom(xml2, xml_text)
+importFrom(utils, read.csv)

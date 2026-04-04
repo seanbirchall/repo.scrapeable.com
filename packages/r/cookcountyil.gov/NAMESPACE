@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(cook_list)
+export(cook_search)
+export(cook_view)
+export(cook_query)
+export(cook_medical_examiner)
+export(cook_property_sales)
+export(cook_assessed_values)
+export(cook_contracts)
+export(cook_payroll)
+export(cook_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

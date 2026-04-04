@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(usag_executive_orders)
+export(usag_all_executive_orders)
+export(usag_realtime)
+export(usag_top_pages)
+export(usag_top_domains)
+export(usag_all_domains)
+export(usag_sites)
+export(usag_list)
+export(usag_search)
+export(usag_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

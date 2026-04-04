@@ -1,0 +1,16 @@
+Package: re3data.org
+Title: API Client for re3data.org
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained API client for re3data.org. All functions return tibbles.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble,
+    xml2

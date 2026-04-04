@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(lacity_datasets)
+export(lacity_query)
+export(lacity_metadata)
+export(lacity_count)
+export(lacity_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

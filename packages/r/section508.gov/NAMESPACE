@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(s508_list)
+export(s508_assessment)
+export(s508_search)
+export(s508_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,3 +1,6 @@
+
+
+
 # population-un-org.R
 # Self-contained UN World Population Prospects client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,43 +9,11 @@
 # Auth: none (public data)
 # Rate limits: none known
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .unpop_base <- "https://population.un.org/dataportalapi/api/v1"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
 
 .fetch <- function(url, ext = ".json") {
   tmp <- tempfile(fileext = ext)
@@ -98,6 +69,7 @@ library(tibble)
 }
 
 # == Public functions ==========================================================
+
 
 #' List available population indicators
 #'
@@ -185,25 +157,46 @@ unpop_data <- function(indicator_id, location_id, start_year = 2000,
     )
 }
 
-#' Print UN Population context for LLM integration
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for population.un.org
 #'
-#' @return Invisibly returns the context string
+#' @return Character string with full function signatures and bodies
 #' @export
 unpop_context <- function() {
-  .build_context(
-    pkg_name = "population.un.org",
-    header_lines = c(
-      "# Package: population.un.org",
-      "# UN World Population Prospects Data Portal API",
-      "# Auth: none",
-      "# Rate limits: none documented",
-      "#",
-      "# Key indicator IDs:",
-      "#   49 = Total population (thousands), 19 = Life expectancy at birth,",
-      "#   54 = Fertility rate, 1 = Births (thousands), 69 = Infant mortality rate",
-      "#",
-      "# Key location IDs:",
-      "#   840 = USA, 156 = China, 356 = India, 826 = UK, 276 = Germany"
-    )
-  )
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/population.un.org.R"
+  if (!file.exists(src_file)) {
+    cat("# population.un.org context - source not found\n")
+    return(invisible("# population.un.org context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

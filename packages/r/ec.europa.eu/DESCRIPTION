@@ -1,10 +1,8 @@
 Package: ec.europa.eu
-Title: Eurostat Data Client
+Title: API Client for ec.europa.eu
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Eurostat SDMX API at ec.europa.eu.
-    Covers GDP, unemployment, inflation, and dataset search across ~8,000
-    Eurostat datasets. Includes LLM context injection via estat_context().
+Description: Self-contained API client for ec.europa.eu. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
+    tibble,
+    tidyr

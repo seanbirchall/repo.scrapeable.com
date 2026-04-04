@@ -1,0 +1,16 @@
+Package: ewu.edu
+Title: Spokane Community Indicators Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Spokane Community Indicators (EWU). Provides access to 233 community indicators covering demographics, economy, education, health, and more for Spokane County.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble,
+    xml2

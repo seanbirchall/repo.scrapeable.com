@@ -1,9 +1,8 @@
 Package: usgs.gov
-Title: USGS Earthquake Data Client
+Title: API Client for usgs.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the USGS earthquake data API. Query earthquakes
-    by magnitude, location, and time. Includes LLM context injection via usgs_context().
+Description: Self-contained API client for usgs.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

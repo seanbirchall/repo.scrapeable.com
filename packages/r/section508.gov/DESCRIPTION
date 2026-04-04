@@ -1,0 +1,17 @@
+Package: section508.gov
+Title: Governmentwide Section 508 Assessment Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the GSA Governmentwide Section 508
+    Assessment data. Provides access to FY2023 and FY2024 reporting entity
+    response data including maturity and conformance scores.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

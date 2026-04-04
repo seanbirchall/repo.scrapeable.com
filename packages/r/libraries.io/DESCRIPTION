@@ -1,8 +1,8 @@
 Package: libraries.io
-Title: Libraries.io Package Manager API Client
+Title: API Client for libraries.io
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Libraries.io API. List platforms, fetch package info, and search packages.
+Description: Self-contained API client for libraries.io. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

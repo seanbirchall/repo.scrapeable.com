@@ -1,8 +1,8 @@
 Package: encodeproject.org
-Title: ENCODE Project API Client
+Title: API Client for encodeproject.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the ENCODE Project API. Covers experiment search, detail retrieval, and file listings. Includes LLM context injection via encode_context().
+Description: Self-contained API client for encodeproject.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

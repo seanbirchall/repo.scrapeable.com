@@ -1,10 +1,8 @@
 Package: ecfr.gov
-Title: Electronic Code of Federal Regulations (eCFR) API Client
+Title: API Client for ecfr.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the eCFR API. Browse CFR titles,
-    search full text, view title structure, and track regulatory changes.
-    Includes LLM context injection via ecfr_context().
+Description: Self-contained API client for ecfr.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

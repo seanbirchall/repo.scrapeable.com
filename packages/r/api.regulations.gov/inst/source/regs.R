@@ -1,3 +1,10 @@
+# api.regulations.gov.R
+# Self-contained api.regulations.gov client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+
+
 # regulations-gov.R
 # Self-contained Regulations.gov API v4 client.
 # All public functions return tibbles with typed columns.
@@ -8,45 +15,12 @@
 # Rate limits: DEMO_KEY = 30/hr. Real key = 1000/hr.
 # Docs: https://open.gsa.gov/api/regulationsgov/
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 .ua <- "support@scrapeable.com"
 .regs_base <- "https://api.regulations.gov/v4"
-
-# -- Context generator ---------------------------------------------------------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
-
 # -- Fetch helper (JSON:API format) --------------------------------------------
 
 .regs_get <- function(endpoint, params = list(), api_key = "DEMO_KEY",
@@ -104,6 +78,7 @@ library(tibble)
 }
 
 
+
 # == Documents =================================================================
 
 #' Search federal regulatory documents
@@ -121,6 +96,7 @@ library(tibble)
 #' @param max_results Max results (default 100)
 #' @return tibble: id, title, agencyId, documentType, postedDate,
 #'   commentEndDate, frDocNum, ...
+#' @export
 regs_documents <- function(query = NULL, agency = NULL, document_type = NULL,
                            posted_date_from = NULL, posted_date_to = NULL,
                            docket_id = NULL, api_key = "DEMO_KEY",
@@ -140,6 +116,7 @@ regs_documents <- function(query = NULL, agency = NULL, document_type = NULL,
 #' @param document_id Document ID (from regs_documents results)
 #' @param api_key API key
 #' @return tibble: one row with full document details
+#' @export
 regs_document <- function(document_id, api_key = "DEMO_KEY") {
   url <- sprintf("%s/documents/%s?api_key=%s", .regs_base, document_id, api_key)
   tmp <- tempfile(fileext = ".json")
@@ -166,6 +143,7 @@ regs_document <- function(document_id, api_key = "DEMO_KEY") {
 #' @param api_key API key
 #' @param max_results Max results (default 100)
 #' @return tibble: id, title, agencyId, postedDate, comment text, ...
+#' @export
 regs_comments <- function(query = NULL, agency = NULL, document_id = NULL,
                           posted_date_from = NULL, posted_date_to = NULL,
                           api_key = "DEMO_KEY", max_results = 100) {
@@ -183,6 +161,7 @@ regs_comments <- function(query = NULL, agency = NULL, document_id = NULL,
 #' @param comment_id Comment ID
 #' @param api_key API key
 #' @return tibble: one row with full comment details including text
+#' @export
 regs_comment <- function(comment_id, api_key = "DEMO_KEY") {
   url <- sprintf("%s/comments/%s?api_key=%s", .regs_base, comment_id, api_key)
   tmp <- tempfile(fileext = ".json")
@@ -209,6 +188,7 @@ regs_comment <- function(comment_id, api_key = "DEMO_KEY") {
 #' @param api_key API key
 #' @param max_results Max results (default 50)
 #' @return tibble: id, title, agencyId, docketType, ...
+#' @export
 regs_dockets <- function(query = NULL, agency = NULL, docket_type = NULL,
                          api_key = "DEMO_KEY", max_results = 50) {
   params <- list()
@@ -223,6 +203,7 @@ regs_dockets <- function(query = NULL, agency = NULL, docket_type = NULL,
 #' @param docket_id Docket ID (e.g. "EPA-HQ-OAR-2021-0208")
 #' @param api_key API key
 #' @return tibble: one row with docket details
+#' @export
 regs_docket <- function(docket_id, api_key = "DEMO_KEY") {
   url <- sprintf("%s/dockets/%s?api_key=%s", .regs_base, docket_id, api_key)
   tmp <- tempfile(fileext = ".json")
@@ -239,22 +220,44 @@ regs_docket <- function(docket_id, api_key = "DEMO_KEY") {
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the api.regulations.gov package
+#' Generate LLM-friendly context for api.regulations.gov
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 regs_context <- function() {
-  .build_context("api.regulations.gov", header_lines = c(
-    "# api.regulations.gov - Federal Rulemaking Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: API key required (api_key param). DEMO_KEY for testing.",
-    "#   Get a key at https://api.data.gov/signup/",
-    "# All functions return tibbles.",
-    "#",
-    "# Three main resources:",
-    "#   Documents = proposed rules, final rules, notices",
-    "#   Comments  = public comments on documents",
-    "#   Dockets   = collections of related documents/comments",
-    "#",
-    "# Agency acronyms: EPA, FDA, DOL, SEC, DOT, FCC, USDA, HHS, DOD, etc."
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/api.regulations.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# api.regulations.gov context - source not found\n")
+    return(invisible("# api.regulations.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

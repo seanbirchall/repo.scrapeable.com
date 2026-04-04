@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(balt_search)
+export(balt_list)
+export(balt_data)
+export(balt_schools)
+export(balt_arrests)
+export(balt_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

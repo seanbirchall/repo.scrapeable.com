@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(oimg_folders)
+export(oimg_services)
+export(oimg_metadata)
+export(oimg_search)
+export(oimg_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

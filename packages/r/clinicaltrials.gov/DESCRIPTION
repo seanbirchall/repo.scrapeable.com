@@ -1,11 +1,8 @@
 Package: clinicaltrials.gov
-Title: ClinicalTrials.gov API v2 Client for R
+Title: API Client for clinicaltrials.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the ClinicalTrials.gov API v2.
-    Search studies, fetch individual study details, outcome measures, adverse
-    events, and database statistics. All functions return tibbles with typed
-    columns. Handles pagination transparently.
+Description: Self-contained API client for clinicaltrials.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -15,4 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
+    tibble,
+    tidyr

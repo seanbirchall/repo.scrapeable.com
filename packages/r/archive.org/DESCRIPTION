@@ -1,9 +1,8 @@
 Package: archive.org
-Title: Internet Archive
+Title: API Client for archive.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for archive.org.
-    Includes LLM context injection via ia_context().
+Description: Self-contained API client for archive.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

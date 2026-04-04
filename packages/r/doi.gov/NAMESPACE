@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(doi_list)
+export(doi_search)
+export(doi_revenue)
+export(doi_revenue_monthly)
+export(doi_production)
+export(doi_production_monthly)
+export(doi_disbursements)
+export(doi_disbursements_monthly)
+export(doi_federal_sales)
+export(doi_revenue_by_company)
+export(doi_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(utils, read.csv)

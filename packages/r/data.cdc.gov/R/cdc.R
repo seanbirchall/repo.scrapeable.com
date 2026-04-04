@@ -1,12 +1,94 @@
+# data.cdc.gov.R
+# Self-contained data.cdc.gov client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+
+
+# cdc-gov.R
+# Self-contained CDC Open Data (Socrata SODA) client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+# Auth: optional app token (reduces throttling). Register at data.cdc.gov.
+# Rate limits: Without token: throttled. With token: higher limits.
+# Docs: https://dev.socrata.com/docs/queries/
+
+
+# == Private utilities =========================================================
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
+.ua <- "support@scrapeable.com"
+.cdc_base <- "https://data.cdc.gov"
+# -- SODA query engine ---------------------------------------------------------
+
+.cdc_get <- function(dataset_id, where = NULL, select = NULL, group = NULL,
+                     order = NULL, limit = 1000, offset = 0, token = NULL,
+                     max_results = NULL) {
+  all_data <- list()
+  current_offset <- offset
+  page_size <- min(limit, 50000)
+
+  repeat {
+    params <- list(`$limit` = page_size, `$offset` = current_offset)
+    if (!is.null(where))  params[["$where"]] <- where
+    if (!is.null(select)) params[["$select"]] <- select
+    if (!is.null(group))  params[["$group"]] <- group
+    if (!is.null(order))  params[["$order"]] <- order
+
+    query <- paste(names(params),
+                   vapply(params, function(v) utils::URLencode(as.character(v), reserved = TRUE),
+                          character(1)),
+                   sep = "=", collapse = "&")
+    url <- paste0(.cdc_base, "/resource/", dataset_id, ".json?", query)
+    if (!is.null(token)) url <- paste0(url, "&$$app_token=", token)
+
+    tmp <- tempfile(fileext = ".json")
+    httr2::request(url) |>
+      httr2::req_headers(`User-Agent` = .ua) |>
+      httr2::req_perform(path = tmp)
+    raw <- jsonlite::fromJSON(tmp)
+
+    if (is.null(raw) || length(raw) == 0 || nrow(raw) == 0) break
+    all_data[[length(all_data) + 1]] <- as_tibble(raw)
+
+    n_so_far <- sum(vapply(all_data, nrow, integer(1)))
+    if (!is.null(max_results) && n_so_far >= max_results) break
+    if (nrow(raw) < page_size) break
+    current_offset <- current_offset + page_size
+  }
+
+  if (length(all_data) == 0) return(tibble())
+  result <- bind_rows(all_data)
+  if (!is.null(max_results)) result <- head(result, max_results)
+  result
+}
+
+
+
 # == Dataset discovery =========================================================
 
 #' Search CDC datasets by keyword
 #'
-#' Queries the Socrata catalog for datasets matching a search term.
+#' Queries the Socrata data catalog at data.cdc.gov for datasets matching
+#' a search term. Filters to dataset type only (excludes maps, charts, etc.).
 #'
-#' @param query Search keyword (e.g. "covid", "mortality", "vaccination")
-#' @param max_results Max datasets to return (default 20)
-#' @return tibble: id, name, description, type, updated_at, columns
+#' @param query Character. Search keyword (e.g., \code{"covid"},
+#'   \code{"mortality"}, \code{"vaccination"}, \code{"influenza"}).
+#' @param max_results Integer. Maximum datasets to return (default 20).
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{id}{\code{character} -- Socrata dataset ID (e.g., "vbim-akqf").
+#'       Use with \code{cdc_get()} and \code{cdc_columns()}.}
+#'     \item{name}{\code{character} -- Dataset name}
+#'     \item{description}{\code{character} -- Dataset description (truncated to 200 chars)}
+#'     \item{type}{\code{character} -- Resource type (always "dataset" after filtering)}
+#'     \item{updated_at}{\code{character} -- Last data update timestamp (ISO 8601)}
+#'     \item{columns}{\code{character} -- Comma-separated list of column field names}
+#'   }
+#' @examples
+#' cdc_search("covid")
+#' cdc_search("influenza", max_results = 5)
 #' @export
 cdc_search <- function(query, max_results = 20) {
   url <- sprintf("%s/api/catalog/v1?q=%s&limit=%d&domains=data.cdc.gov&search_context=data.cdc.gov",
@@ -36,8 +118,22 @@ cdc_search <- function(query, max_results = 20) {
 
 #' Get column metadata for a CDC dataset
 #'
-#' @param dataset_id Socrata dataset ID (e.g. "vbim-akqf")
-#' @return tibble: field_name, name, datatype, description
+#' Returns column names, types, and descriptions for a Socrata dataset.
+#' Useful for building SoQL queries with \code{cdc_get()}.
+#'
+#' @param dataset_id Character. Socrata dataset ID (e.g., \code{"vbim-akqf"},
+#'   \code{"9bhg-hcku"}). Obtain IDs from \code{cdc_search()}.
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{field_name}{\code{character} -- API field name (use in SoQL queries)}
+#'     \item{name}{\code{character} -- Human-readable column name}
+#'     \item{datatype}{\code{character} -- Socrata data type (e.g., "text",
+#'       "number", "calendar_date")}
+#'     \item{description}{\code{character} -- Column description}
+#'   }
+#' @examples
+#' cdc_columns("vbim-akqf")
+#' cdc_columns("9bhg-hcku")
 #' @export
 cdc_columns <- function(dataset_id) {
   url <- sprintf("%s/api/views/%s.json", .cdc_base, dataset_id)
@@ -66,16 +162,30 @@ cdc_columns <- function(dataset_id) {
 
 #' Fetch data from any CDC Socrata dataset
 #'
-#' Uses SoQL (Socrata Query Language) for filtering and aggregation.
+#' General-purpose query function supporting full SoQL (Socrata Query Language)
+#' for filtering, aggregation, and ordering. Handles automatic pagination
+#' up to the requested \code{max_results}.
 #'
-#' @param dataset_id Socrata dataset ID (e.g. "vbim-akqf" for COVID cases)
-#' @param where SoQL WHERE clause (e.g. "sex='Female' AND age_group='50-59 Years'")
-#' @param select SoQL SELECT clause (e.g. "sex, count(*) as n")
-#' @param group SoQL GROUP BY clause (e.g. "sex")
-#' @param order SoQL ORDER BY clause (e.g. "count DESC")
-#' @param token Optional Socrata app token
-#' @param max_results Max rows (default 1000)
-#' @return tibble with all columns as character (Socrata returns strings)
+#' @param dataset_id Character. Socrata four-by-four dataset ID (e.g.,
+#'   \code{"vbim-akqf"} for COVID-19 cases, \code{"9bhg-hcku"} for
+#'   provisional mortality).
+#' @param where Character or \code{NULL}. SoQL WHERE clause for filtering.
+#'   Examples: \code{"sex='Female'"}, \code{"year > '2020'"}.
+#' @param select Character or \code{NULL}. SoQL SELECT clause for column
+#'   selection or aggregation. Example: \code{"sex, count(*) as n"}.
+#' @param group Character or \code{NULL}. SoQL GROUP BY clause.
+#'   Example: \code{"sex"}.
+#' @param order Character or \code{NULL}. SoQL ORDER BY clause.
+#'   Example: \code{"date DESC"}.
+#' @param token Character or \code{NULL}. Socrata app token to avoid throttling.
+#' @param max_results Integer. Maximum rows to return (default 1000).
+#'   Internally paginates in chunks of up to 50,000.
+#' @return A tibble with columns varying by dataset. All columns are returned
+#'   as character (Socrata JSON strings). Convert types as needed.
+#' @examples
+#' cdc_get("vbim-akqf", where = "sex='Female'", max_results = 10)
+#' cdc_get("9bhg-hcku", select = "group, year, count(*) as n",
+#'         group = "group, year", max_results = 50)
 #' @export
 cdc_get <- function(dataset_id, where = NULL, select = NULL,
                     group = NULL, order = NULL, token = NULL,
@@ -89,15 +199,25 @@ cdc_get <- function(dataset_id, where = NULL, select = NULL,
 
 #' COVID-19 case surveillance data
 #'
-#' Individual-level case records from CDC case surveillance.
+#' Queries the CDC COVID-19 Case Surveillance Public Use Data (dataset
+#' \code{vbim-akqf}). Returns de-identified individual-level case records.
 #'
-#' @param state State name filter (e.g. "California")
-#' @param sex Sex filter: "Male", "Female"
-#' @param age_group Age filter: "0 - 9 Years", "10 - 19 Years", etc.
-#' @param where Additional SoQL WHERE clause
-#' @param token Socrata app token
-#' @param max_results Max results (default 1000)
-#' @return tibble of COVID-19 case records
+#' @param state Character or \code{NULL}. State name filter
+#'   (e.g., \code{"California"}, \code{"New York"}).
+#' @param sex Character or \code{NULL}. Sex filter: \code{"Male"} or \code{"Female"}.
+#' @param age_group Character or \code{NULL}. Age group filter. Valid values:
+#'   \code{"0 - 9 Years"}, \code{"10 - 19 Years"}, \code{"20 - 29 Years"},
+#'   \code{"30 - 39 Years"}, \code{"40 - 49 Years"}, \code{"50 - 59 Years"},
+#'   \code{"60 - 69 Years"}, \code{"70 - 79 Years"}, \code{"80+ Years"}.
+#' @param where Character or \code{NULL}. Additional SoQL WHERE clause.
+#' @param token Character or \code{NULL}. Socrata app token.
+#' @param max_results Integer. Maximum rows to return (default 1000).
+#' @return A tibble with columns: cdc_case_earliest_dt, cdc_report_dt,
+#'   pos_spec_dt, onset_dt, current_status, sex, age_group,
+#'   race_ethnicity_combined, hosp_yn, icu_yn, death_yn, medcond_yn.
+#'   All columns are \code{character}.
+#' @examples
+#' cdc_covid_cases(sex = "Female", max_results = 10)
 #' @export
 cdc_covid_cases <- function(state = NULL, sex = NULL, age_group = NULL,
                             where = NULL, token = NULL, max_results = 1000) {
@@ -113,10 +233,18 @@ cdc_covid_cases <- function(state = NULL, sex = NULL, age_group = NULL,
 
 #' COVID-19 vaccination data by jurisdiction
 #'
-#' @param location State/territory abbreviation (e.g. "CA", "NY")
-#' @param token Socrata app token
-#' @param max_results Max results (default 1000)
-#' @return tibble of vaccination counts by date and jurisdiction
+#' Queries the CDC COVID-19 Vaccination Trends dataset (\code{unsk-b7fc}).
+#' Returns daily vaccination counts by state/territory.
+#'
+#' @param location Character or \code{NULL}. Two-letter state/territory
+#'   abbreviation (e.g., \code{"CA"}, \code{"NY"}, \code{"US"}).
+#' @param token Character or \code{NULL}. Socrata app token.
+#' @param max_results Integer. Maximum rows (default 1000). Ordered by date DESC.
+#' @return A tibble with columns varying by dataset version. Typical columns
+#'   include date, location, administered, administered_dose1,
+#'   series_complete, and booster counts. All columns are \code{character}.
+#' @examples
+#' cdc_covid_vaccinations(location = "CA", max_results = 10)
 #' @export
 cdc_covid_vaccinations <- function(location = NULL, token = NULL,
                                    max_results = 1000) {
@@ -130,11 +258,19 @@ cdc_covid_vaccinations <- function(location = NULL, token = NULL,
 
 #' NNDSS (National Notifiable Diseases Surveillance System) weekly data
 #'
-#' @param disease Disease label filter (partial match)
-#' @param year Year filter
-#' @param token Socrata app token
-#' @param max_results Max results (default 1000)
-#' @return tibble of weekly disease counts by state
+#' Queries the NNDSS weekly tables (dataset \code{x9gk-5huc}) for reportable
+#' disease counts by state and MMWR week.
+#'
+#' @param disease Character or \code{NULL}. Disease label for partial matching
+#'   (e.g., \code{"Measles"}, \code{"Pertussis"}, \code{"Hepatitis"}).
+#' @param year Character or \code{NULL}. Year filter (e.g., \code{"2022"}).
+#' @param token Character or \code{NULL}. Socrata app token.
+#' @param max_results Integer. Maximum rows (default 1000).
+#' @return A tibble with columns: states, year, week, label, m1_flag, m2,
+#'   m2_flag, m3_flag, m4_flag, location2, sort_order, location1, geocode.
+#'   All columns are \code{character} except geocode which is a nested data frame.
+#' @examples
+#' cdc_nndss(disease = "Measles", year = "2022", max_results = 10)
 #' @export
 cdc_nndss <- function(disease = NULL, year = NULL, token = NULL,
                       max_results = 1000) {
@@ -151,12 +287,28 @@ cdc_nndss <- function(disease = NULL, year = NULL, token = NULL,
 
 #' Provisional mortality counts (weekly, by cause and jurisdiction)
 #'
-#' @param jurisdiction State name or "United States"
-#' @param cause Cause of death filter (partial match)
-#' @param year Year filter
-#' @param token Socrata app token
-#' @param max_results Max results (default 1000)
-#' @return tibble of weekly mortality counts
+#' Queries the NCHS provisional mortality data (dataset \code{muzy-jte6})
+#' for weekly death counts by cause and jurisdiction. Ordered by
+#' week_ending_date DESC.
+#'
+#' @param jurisdiction Character or \code{NULL}. Jurisdiction name
+#'   (e.g., \code{"United States"}, \code{"California"}, \code{"New York"}).
+#' @param cause Character or \code{NULL}. Currently triggers an
+#'   \code{all_cause IS NOT NULL} filter (all causes returned by default).
+#' @param year Character or \code{NULL}. MMWR year filter (e.g., \code{"2023"}).
+#' @param token Character or \code{NULL}. Socrata app token.
+#' @param max_results Integer. Maximum rows (default 1000).
+#' @return A tibble with columns: data_as_of, jurisdiction_of_occurrence,
+#'   mmwryear, mmwrweek, week_ending_date, all_cause, natural_cause,
+#'   septicemia_a40_a41, malignant_neoplasms_c00_c97,
+#'   diabetes_mellitus_e10_e14, alzheimer_disease_g30,
+#'   influenza_and_pneumonia_j09_j18, chronic_lower_respiratory,
+#'   other_diseases_of_respiratory, nephritis_nephrotic_syndrome,
+#'   symptoms_signs_and_abnormal, diseases_of_heart_i00_i09,
+#'   cerebrovascular_diseases, covid_19_u071_multiple_cause_of_death,
+#'   covid_19_u071_underlying_cause_of_death. All \code{character}.
+#' @examples
+#' cdc_mortality(jurisdiction = "United States", year = "2023", max_results = 5)
 #' @export
 cdc_mortality <- function(jurisdiction = NULL, cause = NULL, year = NULL,
                           token = NULL, max_results = 1000) {
@@ -175,11 +327,19 @@ cdc_mortality <- function(jurisdiction = NULL, cause = NULL, year = NULL,
 
 #' ILINet (Influenza-Like Illness Surveillance) data
 #'
-#' @param region Region filter
-#' @param year Year filter
-#' @param token Socrata app token
-#' @param max_results Max results (default 1000)
-#' @return tibble of weekly ILI rates by region
+#' Queries the ILINet outpatient surveillance data (dataset \code{ite7-j2w7})
+#' for weekly influenza-like illness rates by HHS region.
+#'
+#' @param region Character or \code{NULL}. Region filter with partial matching
+#'   (e.g., \code{"Region 1"}, \code{"National"}).
+#' @param year Character or \code{NULL}. Year filter (e.g., \code{"2023"}).
+#' @param token Character or \code{NULL}. Socrata app token.
+#' @param max_results Integer. Maximum rows (default 1000).
+#' @return A tibble with columns varying by dataset version. Typical columns
+#'   include region, year, week, ilitotal, num_of_providers,
+#'   total_patients, and unweighted_ili. All \code{character}.
+#' @examples
+#' cdc_flu(region = "National", year = "2023", max_results = 10)
 #' @export
 cdc_flu <- function(region = NULL, year = NULL, token = NULL,
                     max_results = 1000) {
@@ -194,30 +354,48 @@ cdc_flu <- function(region = NULL, year = NULL, token = NULL,
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the data.cdc.gov package
+#' Get data.cdc.gov client context for LLM use
 #'
-#' @return Character string (invisibly), also printed
+#' Returns roxygen documentation and function signatures for all public
+#' functions. Shows each function's purpose, parameters, and return type
+#' without implementation. Use `function_name` (no parens) to see source,
+#' or `?function_name` for help.
+#'
+#' @return Character string (printed and returned invisibly)
 #' @export
 cdc_context <- function() {
-  .build_context("data.cdc.gov", header_lines = c(
-    "# data.cdc.gov - CDC Open Data (Socrata SODA) Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: optional Socrata app token (reduces throttling)",
-    "# All functions return tibbles. Uses SoQL query language.",
-    "#",
-    "# Key dataset IDs:",
-    "#   vbim-akqf = COVID-19 Case Surveillance",
-    "#   unsk-b7fc = COVID-19 Vaccinations by Jurisdiction",
-    "#   x9gk-5huc = NNDSS Weekly Disease Tables",
-    "#   muzy-jte6 = Provisional Mortality Counts",
-    "#   ite7-j2w7 = ILINet Flu Surveillance",
-    "#",
-    "# SoQL syntax (use in `where` param):",
-    "#   field='value'           exact match",
-    "#   field like '%pattern%'  partial match",
-    "#   field > '2024-01-01'    comparison",
-    "#   field IS NOT NULL       null check",
-    "#   Use cdc_search('keyword') to discover datasets.",
-    "#   Use cdc_columns('dataset-id') to see available fields."
-  ))
+  src_file <- NULL
+  tryCatch({
+    env <- environment(cdc_context)
+    src <- attr(env, "srcfile")
+    if (!is.null(src)) src_file <<- src$filename
+  }, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) src_file <- "clients/data.cdc.gov.R"
+  if (is.null(src_file) || !file.exists(src_file)) {
+    pkg_src <- system.file("source", package = "data.cdc.gov")
+    if (nzchar(pkg_src)) {
+      sf <- list.files(pkg_src, pattern = "[.]R$", full.names = TRUE)
+      if (length(sf)) src_file <- sf[1]
+    }
+  }
+  if (!file.exists(src_file)) { cat("# data.cdc.gov context - source not found\n"); return(invisible("")) }
+
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_idx <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_idx) {
+    fn <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn, ".")) next
+    j <- fi - 1; rs <- fi
+    while (j > 0 && grepl("^#\047", lines[j])) { rs <- j; j <- j - 1 }
+    rox <- if (rs < fi) lines[rs:(fi - 1)] else character()
+    rox <- rox[!grepl("^#\047 @export|^#\047 @keywords", rox)]
+    sig <- lines[fi]; k <- fi
+    while (!grepl("[{]", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
+    sig <- sub("[[:space:]]*[{][[:space:]]*$", "", sig)
+    blocks[[length(blocks) + 1]] <- c(rox, sig, paste0("  Run `", fn, "` to view source or `?", fn, "` for help."), "")
+  }
+  out <- paste(c("# data.cdc.gov", "# R API Client", "#", "# == Public Functions ==", "#", unlist(blocks)), collapse = "\n")
+  cat(out, "\n"); invisible(out)
 }

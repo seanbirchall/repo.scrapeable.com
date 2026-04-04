@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(doj_list)
+export(doj_search)
+export(doj_it_leadership)
+export(doj_governance_boards)
+export(doj_cost_savings)
+export(doj_language_assistance)
+export(doj_lap_files)
+export(doj_ch7_files)
+export(doj_ch7_data)
+export(doj_enforcement_files)
+export(doj_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,6 +1,8 @@
 # Hand-maintained NAMESPACE
 
 export(gdacs_events)
+export(gdacs_event)
+export(gdacs_summary)
 export(gdacs_context)
 
 import(dplyr)
@@ -10,5 +12,5 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
-
+importFrom(utils, read.csv)
+import(tidyr)

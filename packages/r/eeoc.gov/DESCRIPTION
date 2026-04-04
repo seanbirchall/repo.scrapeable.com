@@ -1,0 +1,13 @@
+Package: eeoc.gov
+Title: EEOC Workforce Data Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for EEOC public use workforce data.
+    EEO-4 state/local government workforce demographics (2005-2021 CSV).
+    EEO-1 private industry workforce data (XLSX by year).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

@@ -1,8 +1,10 @@
 # Hand-maintained NAMESPACE
+
 export(bsky_search_posts)
 export(bsky_search_users)
 export(bsky_profile)
 export(bsky_context)
+
 import(dplyr)
 importFrom(tibble, tibble)
 importFrom(tibble, as_tibble)
@@ -10,4 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

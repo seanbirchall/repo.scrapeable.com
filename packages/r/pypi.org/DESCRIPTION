@@ -1,9 +1,8 @@
 Package: pypi.org
-Title: Python Package Index API Client
+Title: API Client for pypi.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained R client for pypi.org. Includes LLM context
-    injection via pypi_context().
+Description: Self-contained API client for pypi.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

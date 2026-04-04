@@ -89,3 +89,5 @@ NULL
 )
 
 
+
+utils::globalVariables(c("series_id"))

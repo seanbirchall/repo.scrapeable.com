@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(cern_records)
+export(cern_record)
+export(cern_files)
+export(cern_experiments)
+export(opendata_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

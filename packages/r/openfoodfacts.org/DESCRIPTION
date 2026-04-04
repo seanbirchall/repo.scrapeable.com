@@ -1,8 +1,8 @@
 Package: openfoodfacts.org
-Title: Open Food Facts Product Database API Client
+Title: API Client for openfoodfacts.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Open Food Facts API. Search food products, retrieve nutritional information by barcode. Includes LLM context injection via off_context().
+Description: Self-contained API client for openfoodfacts.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

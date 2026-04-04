@@ -1,0 +1,15 @@
+Package: fairfaxcounty.gov
+Title: Fairfax County Open Data Inventory Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for Fairfax County open data inventory. Covers dataset listing, keyword search, and category browsing via ArcGIS FeatureServer.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

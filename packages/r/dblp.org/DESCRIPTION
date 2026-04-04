@@ -1,8 +1,8 @@
 Package: dblp.org
-Title: DBLP Computer Science Bibliography API Client
+Title: API Client for dblp.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the DBLP API. Covers publication search, author search, and venue search.
+Description: Self-contained API client for dblp.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

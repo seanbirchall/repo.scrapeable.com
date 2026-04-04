@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(ok_search)
+export(ok_list)
+export(ok_package)
+export(ok_data)
+export(ok_sql)
+export(ok_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(jsonlite, toJSON)
+importFrom(utils, URLencode)

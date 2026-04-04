@@ -1,0 +1,17 @@
+Package: iowagov
+Title: State of Iowa Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Iowa Socrata Open Data portal (data.iowa.gov).
+    Provides discovery, search, and data access for liquor sales, revenue,
+    road conditions, unemployment, and 426+ state datasets.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

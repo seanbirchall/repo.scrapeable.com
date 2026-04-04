@@ -1,0 +1,16 @@
+Package: saferproducts.gov
+Title: SaferProducts.gov CPSC Recalls and Penalties Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for SaferProducts.gov REST API. Search and retrieve CPSC product
+    recalls and civil/criminal penalties. Includes LLM context injection via safer_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

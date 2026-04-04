@@ -1,0 +1,16 @@
+Package: gsa18f
+Title: 18F / GSA Government API Catalog Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the 18F API-All-the-X catalog of US government
+    APIs and developer hubs. Provides discovery, search, and listing functions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

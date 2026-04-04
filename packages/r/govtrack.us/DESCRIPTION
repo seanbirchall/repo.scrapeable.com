@@ -1,10 +1,8 @@
 Package: govtrack.us
-Title: GovTrack Congressional Data Client
+Title: API Client for govtrack.us
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the GovTrack.us API. Covers bills,
-    members, votes, and committees from the 93rd Congress (1973) to present.
-    Includes LLM context injection via gt_context().
+Description: Self-contained API client for govtrack.us. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

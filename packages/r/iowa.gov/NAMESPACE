@@ -1,0 +1,23 @@
+# Hand-maintained NAMESPACE
+
+export(iowa_list)
+export(iowa_search)
+export(iowa_view)
+export(iowa_query)
+export(iowa_fetch_all)
+export(iowa_count)
+export(iowa_liquor)
+export(iowa_liquor_stores)
+export(iowa_revenue)
+export(iowa_511)
+export(iowa_unemployment)
+export(iowa_travel)
+export(iowa_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,9 +1,100 @@
-#' List available population indicators
+# population.un.org.R - Self-contained population.un.org client
+
+
+
+# population-un-org.R
+# Self-contained UN World Population Prospects client.
+# All public functions return tibbles. All columns properly typed.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+# Auth: none (public data)
+# Rate limits: none known
+
+
+# == Private utilities =========================================================
+
+.ua <- "support@scrapeable.com"
+.unpop_base <- "https://population.un.org/dataportalapi/api/v1"
+
+.fetch <- function(url, ext = ".json") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = .ua) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
+
+.fetch_json <- function(url) jsonlite::fromJSON(.fetch(url))
+
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
+# == Schemas ===================================================================
+
+.schema_indicators <- tibble(
+  id = integer(), name = character(), short_name = character()
+)
+
+.schema_locations <- tibble(
+  id = integer(), name = character(), iso3 = character(),
+  type = character()
+)
+
+.schema_data <- tibble(
+  location_id = integer(), location = character(),
+  indicator_id = integer(), indicator = character(),
+  year = integer(), value = numeric(), sex = character(),
+  variant = character()
+)
+
+# == Private helpers ===========================================================
+
+.unpop_fetch_paginated <- function(url, max_pages = 50) {
+  all_data <- list()
+  page <- 1
+  while (page <= max_pages) {
+    sep <- if (grepl("\\?", url)) "&" else "?"
+    paged_url <- sprintf("%s%spageNumber=%d&pageSize=100", url, sep, page)
+    raw <- tryCatch(.fetch_json(paged_url), error = function(e) NULL)
+    if (is.null(raw)) break
+    dat <- if (is.data.frame(raw)) raw else raw$data
+    if (is.null(dat) || (is.data.frame(dat) && nrow(dat) == 0)) break
+    if (!is.data.frame(dat)) break
+    all_data[[page]] <- dat
+    # Check if there are more pages
+    total <- raw$totalPages %||% raw$pages %||% page
+    if (page >= total) break
+    page <- page + 1
+  }
+  if (length(all_data) == 0) return(NULL)
+  bind_rows(all_data)
+}
+
+# == Public functions ==========================================================
+
+
+#' List available UN population indicators
 #'
-#' Returns a tibble of available demographic indicators from the UN Population
-#' Division Data Portal (e.g., total population, fertility rate, life expectancy).
+#' Returns a tibble of all demographic indicators published by the UN
+#' Population Division Data Portal. These include total population
+#' (indicator 49), fertility rates, life expectancy, mortality,
+#' migration, and family planning metrics (~86 indicators total).
+#' Use the \code{id} column with \code{unpop_data()} to fetch time
+#' series data.
 #'
-#' @return tibble: id, name, short_name
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{id}{Integer. Indicator identifier (e.g. 49 for total population).}
+#'     \item{name}{Character. Full indicator name.}
+#'     \item{short_name}{Character. Abbreviated indicator name.}
+#'   }
+#'
+#' @details Results are paginated internally (100 per page, up to 50 pages).
+#'
+#' @examples
+#' ind <- unpop_indicators()
+#' ind[ind$id == 49, ]
+#'
+#' @seealso \code{\link{unpop_locations}}, \code{\link{unpop_data}}
 #' @export
 unpop_indicators <- function() {
   url <- paste0(.unpop_base, "/indicators")
@@ -23,12 +114,31 @@ unpop_indicators <- function() {
     )
 }
 
-#' List available locations (countries, regions)
+#' List available UN population locations
 #'
-#' Returns a tibble of geographic locations available in the UN Population
-#' Data Portal, including countries, regions, and income groups.
+#' Returns a tibble of all geographic entities available in the UN
+#' Population Data Portal (~300 entries). Includes individual countries,
+#' regions (e.g. "Sub-Saharan Africa"), development groups, and income
+#' categories. Use the \code{id} column with \code{unpop_data()} as the
+#' \code{location_id} parameter.
 #'
-#' @return tibble: id, name, iso3, type
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{id}{Integer. Location identifier (e.g. 840 for United States).}
+#'     \item{name}{Character. Location name.}
+#'     \item{iso3}{Character. ISO 3166-1 alpha-3 code, or \code{NA} for
+#'       aggregate regions.}
+#'     \item{type}{Character. Location type (e.g. country, region), or
+#'       \code{NA} if not provided by the API.}
+#'   }
+#'
+#' @details Results are paginated internally (100 per page, up to 50 pages).
+#'
+#' @examples
+#' locs <- unpop_locations()
+#' locs[locs$iso3 == "USA", ]
+#'
+#' @seealso \code{\link{unpop_indicators}}, \code{\link{unpop_data}}
 #' @export
 unpop_locations <- function() {
   url <- paste0(.unpop_base, "/locations")
@@ -50,14 +160,42 @@ unpop_locations <- function() {
     )
 }
 
-#' Fetch population data for a specific indicator and location
+#' Fetch UN population data for a specific indicator and location
 #'
-#' @param indicator_id Numeric indicator ID (e.g., 49 = total population)
-#' @param location_id Numeric location ID (e.g., 840 = United States)
-#' @param start_year Start year (default 2000)
-#' @param end_year End year (default 2025)
-#' @return tibble: location_id, location, indicator_id, indicator, year,
-#'   value, sex, variant
+#' Retrieves demographic time series data from the UN World Population
+#' Prospects. Combines an indicator (e.g. total population, life
+#' expectancy) with a location (country or region) and year range.
+#' Results may include multiple rows per year when data is disaggregated
+#' by sex or variant (medium, high, low projection).
+#'
+#' @param indicator_id Integer. Indicator ID from \code{unpop_indicators()}
+#'   (e.g. 49 for total population, 68 for life expectancy at birth).
+#' @param location_id Integer. Location ID from \code{unpop_locations()}
+#'   (e.g. 840 for United States, 156 for China).
+#' @param start_year Integer. First year of the time range (default 2000).
+#' @param end_year Integer. Last year of the time range (default 2025).
+#'
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{location_id}{Integer. Location identifier.}
+#'     \item{location}{Character. Location name.}
+#'     \item{indicator_id}{Integer. Indicator identifier.}
+#'     \item{indicator}{Character. Indicator name.}
+#'     \item{year}{Integer. Reference year.}
+#'     \item{value}{Numeric. Indicator value (units depend on indicator).}
+#'     \item{sex}{Character. Sex disaggregation (\code{"Both sexes"},
+#'       \code{"Male"}, \code{"Female"}), or \code{NA}.}
+#'     \item{variant}{Character. Projection variant (\code{"Medium"},
+#'       \code{"High"}, \code{"Low"}), or \code{NA} for historical data.}
+#'   }
+#'
+#' @details Results are paginated internally (100 per page, up to 50 pages).
+#'
+#' @examples
+#' # Total population of the United States, 2020-2025
+#' unpop_data(49, 840, 2020, 2025)
+#'
+#' @seealso \code{\link{unpop_indicators}}, \code{\link{unpop_locations}}
 #' @export
 unpop_data <- function(indicator_id, location_id, start_year = 2000,
                        end_year = 2025) {
@@ -84,25 +222,50 @@ unpop_data <- function(indicator_id, location_id, start_year = 2000,
     )
 }
 
-#' Print UN Population context for LLM integration
+# == Context ===================================================================
+
+#' Get population.un.org client context for LLM use
 #'
-#' @return Invisibly returns the context string
+#' Returns roxygen documentation and function signatures for all public
+#' functions. Shows each function's purpose, parameters, and return type
+#' without implementation. Use `function_name` (no parens) to see source,
+#' or `?function_name` for help.
+#'
+#' @return Character string (printed and returned invisibly)
 #' @export
 unpop_context <- function() {
-  .build_context(
-    pkg_name = "population.un.org",
-    header_lines = c(
-      "# Package: population.un.org",
-      "# UN World Population Prospects Data Portal API",
-      "# Auth: none",
-      "# Rate limits: none documented",
-      "#",
-      "# Key indicator IDs:",
-      "#   49 = Total population (thousands), 19 = Life expectancy at birth,",
-      "#   54 = Fertility rate, 1 = Births (thousands), 69 = Infant mortality rate",
-      "#",
-      "# Key location IDs:",
-      "#   840 = USA, 156 = China, 356 = India, 826 = UK, 276 = Germany"
-    )
-  )
+  src_file <- NULL
+  tryCatch({
+    env <- environment(unpop_context)
+    src <- attr(env, "srcfile")
+    if (!is.null(src)) src_file <<- src$filename
+  }, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) src_file <- "clients/population.un.org.R"
+  if (is.null(src_file) || !file.exists(src_file)) {
+    pkg_src <- system.file("source", package = "population.un.org")
+    if (nzchar(pkg_src)) {
+      sf <- list.files(pkg_src, pattern = "[.]R$", full.names = TRUE)
+      if (length(sf)) src_file <- sf[1]
+    }
+  }
+  if (!file.exists(src_file)) { cat("# population.un.org context - source not found\n"); return(invisible("")) }
+
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_idx <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_idx) {
+    fn <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn, ".")) next
+    j <- fi - 1; rs <- fi
+    while (j > 0 && grepl("^#\047", lines[j])) { rs <- j; j <- j - 1 }
+    rox <- if (rs < fi) lines[rs:(fi - 1)] else character()
+    rox <- rox[!grepl("^#\047 @export|^#\047 @keywords", rox)]
+    sig <- lines[fi]; k <- fi
+    while (!grepl("[{]", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
+    sig <- sub("[[:space:]]*[{][[:space:]]*$", "", sig)
+    blocks[[length(blocks) + 1]] <- c(rox, sig, paste0("  Run `", fn, "` to view source or `?", fn, "` for help."), "")
+  }
+  out <- paste(c("# population.un.org", "# R API Client", "#", "# == Public Functions ==", "#", unlist(blocks)), collapse = "\n")
+  cat(out, "\n"); invisible(out)
 }

@@ -1,3 +1,6 @@
+
+
+
 # data-cityofchicago-org.R
 # Self-contained Chicago Open Data (Socrata SODA) client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,46 +9,11 @@
 # Auth: none required (app tokens optional for higher rate limits)
 # Rate limits: 1000 requests/hour without app token
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .chi_base <- "https://data.cityofchicago.org"
-
-# -- Context generator (reads roxygen + signatures from inst/source/) ----------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
-
 # -- Fetch helpers -------------------------------------------------------------
 
 .fetch <- function(url, ext = ".json") {
@@ -71,6 +39,7 @@ library(tibble)
 .schema_query <- tibble()
 
 
+
 # == Dataset discovery =========================================================
 
 #' List available datasets on Chicago Open Data
@@ -81,6 +50,7 @@ library(tibble)
 #' @param limit Number of datasets to return (default 50, max 200)
 #' @param category Optional category filter (e.g. "Public Safety")
 #' @return tibble: id, name, description, category, type, updated_at, view_count
+#' @export
 chi_datasets <- function(limit = 50, category = NULL) {
   url <- sprintf("%s/api/views?limit=%d", .chi_base, limit)
   raw <- .fetch_json(url)
@@ -120,6 +90,7 @@ chi_datasets <- function(limit = 50, category = NULL) {
 #' @param limit Number of rows to return (default 1000, max 50000)
 #' @param offset Offset for pagination (default 0)
 #' @return tibble with columns from the dataset
+#' @export
 chi_query <- function(dataset_id, where = NULL, select = NULL,
                       order = NULL, limit = 1000, offset = 0) {
   params <- list(`$limit` = limit, `$offset` = offset)
@@ -163,3 +134,47 @@ chi_context <- function() {
   )
   .build_context("data.cityofchicago.org", header_lines = header)
 }
+
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for data.cityofchicago.org
+#'
+#' @return Character string with full function signatures and bodies
+#' @export
+cityofchicago_context <- function() {
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.cityofchicago.org.R"
+  if (!file.exists(src_file)) {
+    cat("# data.cityofchicago.org context - source not found\n")
+    return(invisible("# data.cityofchicago.org context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
+}
+

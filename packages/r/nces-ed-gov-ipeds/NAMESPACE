@@ -1,0 +1,14 @@
+# Auto-generated NAMESPACE
+
+export(ipeds_institutions)
+export(ipeds_enrollment)
+export(ipeds_completions)
+export(ipeds_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

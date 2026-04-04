@@ -2,6 +2,12 @@
 
 export(ebi_protein)
 export(ebi_search)
+export(ebi_features)
+export(ebi_sequence)
+export(chembl_molecule)
+export(chembl_search)
+export(chembl_target)
+export(chembl_activities)
 export(ebi_context)
 
 import(dplyr)
@@ -11,4 +17,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

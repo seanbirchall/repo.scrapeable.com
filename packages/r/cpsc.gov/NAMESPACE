@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(cpsc_list)
+export(cpsc_search)
+export(cpsc_recall)
+export(cpsc_by_year)
+export(cpsc_summary)
+export(cpsc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

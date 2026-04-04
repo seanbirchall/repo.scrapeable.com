@@ -1,3 +1,6 @@
+
+
+
 # data-oecd-org.R
 # Self-contained OECD SDMX data client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,41 +9,10 @@
 # Auth: none required
 # API: SDMX REST at sdmx.oecd.org (CSV format for data)
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
-
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .oecd_base <- "https://sdmx.oecd.org/public/rest"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
 
 .fetch <- function(url, ext = ".json") {
   tmp <- tempfile(fileext = ext)
@@ -111,6 +83,7 @@ library(tibble)
 #' @param end_period End year (e.g. "2023")
 #' @param first_n Limit to first N observations per series
 #' @return tibble with SDMX columns (varies by dataflow)
+#' @export
 oecd_data <- function(agency, dataflow, key = "",
                       start_period = NULL, end_period = NULL,
                       first_n = NULL) {
@@ -152,6 +125,7 @@ oecd_data <- function(agency, dataflow, key = "",
 #' @param start_period Start year
 #' @param end_period End year
 #' @return tibble with SDMX columns
+#' @export
 oecd_fetch <- function(name, key = "", start_period = NULL, end_period = NULL) {
   match <- .oecd_popular |> filter(short_name == toupper(name))
   if (nrow(match) == 0) {
@@ -169,6 +143,7 @@ oecd_fetch <- function(name, key = "", start_period = NULL, end_period = NULL) {
 #' Returns a curated list of commonly used OECD dataflows.
 #'
 #' @return tibble: short_name, agency, dataflow, description
+#' @export
 oecd_dataflows_popular <- function() {
   .oecd_popular
 }
@@ -176,24 +151,44 @@ oecd_dataflows_popular <- function() {
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the OECD package
+#' Generate LLM-friendly context for data.oecd.org
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 oecd_context <- function() {
-  .build_context("data.oecd.org", header_lines = c(
-    "# data.oecd.org - OECD SDMX Data Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: none required",
-    "# All functions return tibbles.",
-    "#",
-    "# 1,481 dataflows across OECD departments",
-    "# Data returned as CSV with SDMX columns",
-    "#",
-    "# Popular dataflows: NAAG (GDP), CLI (Leading Indicators),",
-    "#   CPI (Consumer Prices), ULC (Unit Labour Costs),",
-    "#   STLABOUR (Labour Force), MEI (Main Economic Indicators)",
-    "#",
-    "# Key dimension: dot-separated, empty = wildcard",
-    "# Example: 'A.USA....' = Annual, USA, all others wild"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.oecd.org.R"
+  if (!file.exists(src_file)) {
+    cat("# data.oecd.org context - source not found\n")
+    return(invisible("# data.oecd.org context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

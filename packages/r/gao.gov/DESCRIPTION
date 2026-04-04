@@ -1,10 +1,8 @@
 Package: gao.gov
-Title: GAO Reports Client via GovInfo API
+Title: API Client for gao.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for GAO (Government Accountability Office)
-    reports via the GovInfo API. Covers recent reports, report details, and
-    full-text search. Includes LLM context injection via gao_context().
+Description: Self-contained API client for gao.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

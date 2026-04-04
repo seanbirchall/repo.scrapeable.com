@@ -1,0 +1,19 @@
+Package: mo.gov
+Title: Missouri Open Data (Socrata SODA) Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Missouri Open Data Socrata SODA API
+    at data.mo.gov. Covers dataset listing, search, SoQL queries, and named
+    functions for alcohol licenses, unemployment claims, state employee pay,
+    expenditures, agriculture, public safety, health, education, employment,
+    natural resources, and more. Includes LLM context injection via mog_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

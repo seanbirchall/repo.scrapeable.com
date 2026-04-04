@@ -1,0 +1,13 @@
+# Auto-generated NAMESPACE
+
+export(ccd_schools)
+export(ccd_districts)
+export(ccd_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

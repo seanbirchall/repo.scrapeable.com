@@ -1,10 +1,8 @@
 Package: psmsl.org
-Title: Permanent Service for Mean Sea Level (PSMSL) Client
+Title: API Client for psmsl.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the PSMSL tide gauge data. Lists all
-    RLR stations worldwide and fetches annual mean sea level records.
-    Includes LLM context injection via psmsl_context().
+Description: Self-contained API client for psmsl.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -15,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

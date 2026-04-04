@@ -1,8 +1,8 @@
 Package: metmuseum.org
-Title: Metropolitan Museum of Art Collection API Client
+Title: API Client for metmuseum.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Met Museum Collection API. Covers search, object details, and department listing.
+Description: Self-contained API client for metmuseum.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

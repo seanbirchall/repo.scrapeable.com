@@ -1,0 +1,15 @@
+Package: greatschools.org
+Title: GreatSchools API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the GreatSchools API. Search for schools by location, coordinates, or name and retrieve ratings, enrollment, and contact info. Requires API key.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

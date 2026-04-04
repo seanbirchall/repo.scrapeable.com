@@ -1,0 +1,14 @@
+Package: honolulu.gov
+Title: Honolulu Open Data (Socrata) API Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the City and County of Honolulu open data
+    portal (data.honolulu.gov). Traffic incidents, HPD crime incidents, 311 service
+    requests, building permits, budget data, business registrations, and generic
+    SODA API access to all 70+ datasets.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

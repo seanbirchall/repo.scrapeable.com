@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(dot_search)
+export(dot_list)
+export(dot_data)
+export(dot_pipeline_safety)
+export(dot_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

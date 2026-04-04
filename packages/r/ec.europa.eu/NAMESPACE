@@ -1,11 +1,14 @@
 # Hand-maintained NAMESPACE
 
-export(estat_context)
 export(estat_data)
 export(estat_gdp)
+export(estat_unemployment)
 export(estat_inflation)
 export(estat_search)
-export(estat_unemployment)
+export(pvgis_monthly)
+export(pvgis_radiation)
+export(pvgis_optimal)
+export(ec_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -14,3 +17,5 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)
+import(tidyr)

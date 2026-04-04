@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(osmre_list)
+export(osmre_offices)
+export(osmre_mine_maps)
+export(osmre_coalmine_operations)
+export(osmre_search)
+export(osmre_query)
+export(osmre_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(httr2, req_url_query)
+importFrom(httr2, req_options)
+importFrom(utils, URLencode)

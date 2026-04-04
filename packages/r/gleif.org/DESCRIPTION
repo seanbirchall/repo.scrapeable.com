@@ -1,8 +1,8 @@
 Package: gleif.org
-Title: GLEIF Legal Entity Identifier (LEI) Client
+Title: API Client for gleif.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the GLEIF API. Searches and retrieves Legal Entity Identifier records for companies worldwide.
+Description: Self-contained API client for gleif.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -10,6 +10,6 @@ RoxygenNote: 7.3.2
 Depends: R (>= 4.1.0)
 Imports:
     httr2,
+    jsonlite,
     dplyr,
-    tibble,
-    jsonlite
+    tibble

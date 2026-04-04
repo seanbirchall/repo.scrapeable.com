@@ -1,3 +1,10 @@
+# api.fda.gov.R
+# Self-contained api.fda.gov client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+
+
 # fda-gov.R
 # Self-contained FDA openFDA API client.
 # All public functions return tibbles with typed columns.
@@ -8,45 +15,12 @@
 #   Register at https://open.fda.gov/apis/authentication/
 # Docs: https://open.fda.gov/apis/
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 .ua <- "support@scrapeable.com"
 .fda_base <- "https://api.fda.gov"
-
-# -- Context generator ---------------------------------------------------------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
-
 # -- Core fetch engine ---------------------------------------------------------
 
 .fda_get <- function(endpoint, search = NULL, count = NULL, sort = NULL,
@@ -105,6 +79,7 @@ library(tibble)
 }
 
 
+
 # == Drug adverse events =======================================================
 
 #' Search FDA drug adverse event reports (FAERS)
@@ -116,6 +91,7 @@ library(tibble)
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100, max 26000 via skip)
 #' @return tibble of adverse event reports
+#' @export
 fda_drug_event <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("drug/event.json", search, api_key = api_key, max_results = max_results)
 }
@@ -130,6 +106,7 @@ fda_drug_event <- function(search = NULL, api_key = NULL, max_results = 100) {
 #' @param limit Number of top values (default 10, max 1000)
 #' @param api_key Optional API key
 #' @return tibble: term, count
+#' @export
 fda_drug_event_count <- function(field, search = NULL, limit = 10,
                                  api_key = NULL) {
   raw <- .fda_get("drug/event.json", search = search, count = field,
@@ -154,6 +131,7 @@ fda_drug_event_count <- function(field, search = NULL, limit = 10,
 #' @param api_key Optional API key
 #' @param max_results Max results (default 10 — labels are large documents)
 #' @return tibble of drug label records
+#' @export
 fda_drug_label <- function(search = NULL, api_key = NULL, max_results = 10) {
   .fda_fetch_all("drug/label.json", search, api_key = api_key, max_results = max_results)
 }
@@ -170,6 +148,7 @@ fda_drug_label <- function(search = NULL, api_key = NULL, max_results = 10) {
 #' @param max_results Max results (default 100)
 #' @return tibble: product_ndc, brand_name, generic_name, dosage_form,
 #'   route, marketing_category, ...
+#' @export
 fda_drug_ndc <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("drug/ndc.json", search, api_key = api_key, max_results = max_results)
 }
@@ -186,6 +165,7 @@ fda_drug_ndc <- function(search = NULL, api_key = NULL, max_results = 100) {
 #' @param max_results Max results (default 100)
 #' @return tibble: recall_number, classification, reason_for_recall,
 #'   product_description, city, state, ...
+#' @export
 fda_drug_recall <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("drug/enforcement.json", search, api_key = api_key, max_results = max_results)
 }
@@ -208,6 +188,7 @@ fda_drug_recall <- function(search = NULL, api_key = NULL, max_results = 100) {
 #' @param max_results Max results (default 50)
 #' @return tibble: application_number, sponsor_name, plus nested products
 #'   and submissions data (flattened)
+#' @export
 fda_orange_book <- function(search = NULL, api_key = NULL, max_results = 50) {
   raw <- .fda_get("drug/drugsfda.json", search = search,
                   limit = min(max_results, 100), api_key = api_key)
@@ -256,6 +237,7 @@ fda_orange_book <- function(search = NULL, api_key = NULL, max_results = 50) {
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100)
 #' @return tibble of device event reports
+#' @export
 fda_device_event <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("device/event.json", search, api_key = api_key, max_results = max_results)
 }
@@ -266,6 +248,7 @@ fda_device_event <- function(search = NULL, api_key = NULL, max_results = 100) {
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100)
 #' @return tibble of device recall records
+#' @export
 fda_device_recall <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("device/enforcement.json", search, api_key = api_key, max_results = max_results)
 }
@@ -277,6 +260,7 @@ fda_device_recall <- function(search = NULL, api_key = NULL, max_results = 100) 
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100)
 #' @return tibble of device classification records
+#' @export
 fda_device_classification <- function(search = NULL, api_key = NULL,
                                       max_results = 100) {
   .fda_fetch_all("device/classification.json", search, api_key = api_key, max_results = max_results)
@@ -291,6 +275,7 @@ fda_device_classification <- function(search = NULL, api_key = NULL,
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100)
 #' @return tibble of food recall records
+#' @export
 fda_food_recall <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("food/enforcement.json", search, api_key = api_key, max_results = max_results)
 }
@@ -301,6 +286,7 @@ fda_food_recall <- function(search = NULL, api_key = NULL, max_results = 100) {
 #' @param api_key Optional API key
 #' @param max_results Max results (default 100)
 #' @return tibble of food adverse event reports
+#' @export
 fda_food_event <- function(search = NULL, api_key = NULL, max_results = 100) {
   .fda_fetch_all("food/event.json", search, api_key = api_key, max_results = max_results)
 }
@@ -308,23 +294,44 @@ fda_food_event <- function(search = NULL, api_key = NULL, max_results = 100) {
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the api.fda.gov package
+#' Generate LLM-friendly context for api.fda.gov
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 fda_context <- function() {
-  .build_context("api.fda.gov", header_lines = c(
-    "# api.fda.gov - FDA openFDA API Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: optional API key (api_key param). 240 req/min without.",
-    "# All functions return tibbles.",
-    "#",
-    "# Search syntax: field:value, field:[start+TO+end] for dates",
-    "#   brand_name, generic_name, manufacturer_name, ndc, reaction, etc.",
-    "#   Use .exact suffix for exact match: brand_name.exact:LIPITOR",
-    "#",
-    "# Endpoints covered:",
-    "#   Drug: adverse events, labels, NDC, recalls, Orange Book (drugsfda)",
-    "#   Device: adverse events, recalls, classifications",
-    "#   Food: adverse events, recalls"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/api.fda.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# api.fda.gov context - source not found\n")
+    return(invisible("# api.fda.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

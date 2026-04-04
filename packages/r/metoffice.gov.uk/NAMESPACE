@@ -3,6 +3,7 @@
 export(hadcrut_global_annual)
 export(hadcrut_global_monthly)
 export(hadcrut_context)
+export(metoffice_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -11,4 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

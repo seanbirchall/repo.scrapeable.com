@@ -1,0 +1,15 @@
+Package: energystar.gov
+Title: ENERGY STAR Certified Products API Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the ENERGY STAR certified products
+    database on data.energystar.gov (Socrata SODA API). Covers 70+ product
+    categories including computers, displays, appliances, HVAC, lighting,
+    and EV chargers. Discovery via catalog search and direct data access
+    with SoQL filtering.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

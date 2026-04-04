@@ -1,8 +1,10 @@
 # Hand-maintained NAMESPACE
 
+export(chron_search)
+export(chron_newspapers)
+export(chron_search_advanced)
 export(loc_search)
 export(loc_collections)
-export(loc_item)
 export(loc_context)
 
 import(dplyr)
@@ -12,4 +14,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

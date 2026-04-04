@@ -2,6 +2,8 @@
 
 export(osti_search)
 export(osti_record)
+export(osti_by_sponsor)
+export(osti_subject)
 export(osti_context)
 
 import(dplyr)
@@ -11,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

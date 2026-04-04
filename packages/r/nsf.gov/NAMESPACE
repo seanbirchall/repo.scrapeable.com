@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(nsf_search)
+export(nsf_award)
+export(nsf_pi)
+export(nsf_institution)
+export(nsf_program)
+export(nsf_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

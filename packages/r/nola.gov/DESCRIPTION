@@ -1,0 +1,19 @@
+Package: nola.gov
+Title: City of New Orleans Open Data (Socrata SODA) Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the City of New Orleans open data portal
+    (data.nola.gov). Covers dataset discovery, SoQL queries, 311 requests, police
+    calls for service, permits, code enforcement, use of force, misconduct
+    complaints, business licenses, and short-term rentals. Includes LLM context
+    injection via nola_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

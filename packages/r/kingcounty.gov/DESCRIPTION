@@ -1,0 +1,17 @@
+Package: kingcounty
+Title: King County, WA Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for King County, WA Socrata Open Data portal.
+    Provides discovery, search, and data access for pets, crime, food inspections,
+    water quality, property tax, elections, and 245+ county datasets.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

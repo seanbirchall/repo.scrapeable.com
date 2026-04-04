@@ -1,0 +1,23 @@
+# Hand-maintained NAMESPACE
+
+export(tides_predictions)
+export(tides_water_levels)
+export(tides_stations)
+export(co2_global_trend)
+export(co2_annual)
+export(co2_monthly)
+export(co2_ch4_monthly)
+export(swpc_plasma)
+export(swpc_mag)
+export(swpc_kp_index)
+export(swpc_alerts)
+export(noaa_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

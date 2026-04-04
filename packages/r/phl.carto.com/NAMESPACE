@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(phl_tables)
+export(phl_query)
+export(phl_crimes)
+export(phl_permits)
+export(phl_violations)
+export(phl_count)
+export(phl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

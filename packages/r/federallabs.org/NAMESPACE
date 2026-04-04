@@ -1,0 +1,14 @@
+# Hand-maintained NAMESPACE
+
+export(flc_inventions)
+export(flc_search)
+export(flc_organizations)
+export(flc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(utils, read.csv)

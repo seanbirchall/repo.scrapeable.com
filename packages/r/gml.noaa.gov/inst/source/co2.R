@@ -1,3 +1,6 @@
+
+
+
 # gml-noaa-gov.R
 # Self-contained NOAA GML CO2/CH4 trends client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,8 +9,6 @@
 # Auth: none
 # Rate limits: none - static CSV files
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
@@ -15,36 +16,6 @@ library(tibble)
 .gml_base <- "https://gml.noaa.gov/webdata/ccgg/trends"
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
 
 .fetch_csv <- function(url) {
   tmp <- tempfile(fileext = ".csv")
@@ -71,6 +42,7 @@ library(tibble)
 )
 
 # == CO2 data ==================================================================
+
 
 #' Fetch daily global CO2 trend data
 #'
@@ -152,17 +124,46 @@ co2_ch4_monthly <- function() {
     )
 }
 
-#' NOAA GML context for LLM integration
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for gml.noaa.gov
 #'
-#' @return Prints package documentation; returns invisibly
+#' @return Character string with full function signatures and bodies
 #' @export
 co2_context <- function() {
-  .build_context("gml.noaa.gov", header_lines = c(
-    "# gml.noaa.gov - NOAA Global Monitoring Lab CO2/CH4 Client",
-    "# Deps: httr2, dplyr, tibble",
-    "# Auth: none",
-    "# Data: static CSV files updated daily/monthly",
-    "#",
-    "# CO2 measured in ppm, CH4 in ppb"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/gml.noaa.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# gml.noaa.gov context - source not found\n")
+    return(invisible("# gml.noaa.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

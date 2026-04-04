@@ -1,8 +1,8 @@
 Package: opentopography.org
-Title: OpenTopography LiDAR Catalog API Client
+Title: API Client for opentopography.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the OpenTopography API. Search LiDAR datasets by bounding box.
+Description: Self-contained API client for opentopography.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

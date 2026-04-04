@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(exim_list)
+export(exim_search)
+export(exim_by_country)
+export(exim_by_year)
+export(exim_by_program)
+export(exim_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

@@ -1,8 +1,8 @@
 Package: themealdb.com
-Title: TheMealDB Recipe Database API Client
+Title: API Client for themealdb.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for TheMealDB API. Search meals, browse categories, get random meals, filter by category. Includes LLM context injection via meal_context().
+Description: Self-contained API client for themealdb.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

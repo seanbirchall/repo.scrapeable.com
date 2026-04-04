@@ -1,0 +1,15 @@
+Package: broadbandmap.gov
+Title: NTIA National Broadband Map API Client for R (Defunct)
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the former NTIA National Broadband Map
+    API at broadbandmap.gov. The API was decommissioned in December 2018. This
+    package provides a catalog of the 29 original endpoints and status-checking
+    utilities. The replacement FCC Broadband Map at broadbandmap.fcc.gov
+    requires authentication.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

@@ -1,0 +1,17 @@
+Package: sfgov
+Title: San Francisco Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for San Francisco Socrata Open Data portal (data.sfgov.org).
+    Provides discovery, search, and data access for police incidents, 311 cases,
+    fire incidents, budget, building permits, and more.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

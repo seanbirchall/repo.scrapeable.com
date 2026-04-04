@@ -1,0 +1,15 @@
+Package: nyctmc.org
+Title: NYC Traffic Management Center Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the NYC Traffic Management Center. Provides real-time EZ-Pass traffic speed data from Midtown in Motion sensors across NYC boroughs.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

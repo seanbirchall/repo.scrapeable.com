@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(hud_catalog)
+export(hud_search)
+export(hud_fmr)
+export(hud_income_limits)
+export(hud_inspections)
+export(hud_section8_contracts)
+export(hud_homeless_counts)
+export(hud_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_timeout)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(readxl, read_excel)

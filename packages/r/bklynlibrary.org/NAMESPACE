@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(bpl_branches)
+export(bpl_search)
+export(bpl_resources)
+export(bpl_search_resources)
+export(bpl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

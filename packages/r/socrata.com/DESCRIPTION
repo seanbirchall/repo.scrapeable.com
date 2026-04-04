@@ -1,0 +1,14 @@
+Package: socrata.com
+Title: Socrata Open Data Discovery and Access Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Socrata Discovery API and SODA 2.1.
+    Search across thousands of open data portals, browse datasets by domain,
+    fetch metadata, and retrieve actual data rows with SoQL queries. All
+    functions return tibbles.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

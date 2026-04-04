@@ -1,7 +1,8 @@
 # Hand-maintained NAMESPACE
 
 export(berk_global_temp)
-export(berk_context)
+export(berk_land_temp)
+export(berkeleyearth_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -10,4 +11,5 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)
+import(tidyr)

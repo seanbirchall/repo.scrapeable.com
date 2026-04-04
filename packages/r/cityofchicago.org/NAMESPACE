@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(chi_datasets)
+export(chi_query)
+export(chi_metadata)
+export(chi_count)
+export(cityofchicago_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

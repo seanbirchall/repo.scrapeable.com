@@ -2,6 +2,8 @@
 
 export(dryad_datasets)
 export(dryad_dataset)
+export(dryad_search)
+export(dryad_files)
 export(dryad_context)
 
 import(dplyr)
@@ -11,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

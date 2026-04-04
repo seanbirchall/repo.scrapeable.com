@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(ccd_schools)
+export(ccd_districts)
+export(ccd_enrollment)
+export(ipeds_institutions)
+export(ipeds_enrollment)
+export(ipeds_completions)
+export(eric_search)
+export(eric_document)
+export(eric_facets)
+export(ed_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -2,7 +2,9 @@
 
 export(ia_search)
 export(ia_metadata)
-export(ia_context)
+export(wayback_available)
+export(wayback_cdx)
+export(archive_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -11,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

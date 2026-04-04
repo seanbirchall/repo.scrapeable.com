@@ -1,0 +1,16 @@
+# Auto-generated NAMESPACE
+
+export(tempe_datasets)
+export(tempe_search)
+export(tempe_data)
+export(tempe_arrests)
+export(tempe_offenses)
+export(tempe_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

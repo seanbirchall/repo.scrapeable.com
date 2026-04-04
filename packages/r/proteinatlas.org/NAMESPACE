@@ -2,7 +2,8 @@
 
 export(hpa_search)
 export(hpa_gene)
-export(hpa_context)
+export(hpa_gene_detail)
+export(proteinatlas_context)
 
 import(dplyr)
 importFrom(tibble, tibble)
@@ -11,4 +12,5 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)
+import(tidyr)

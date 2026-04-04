@@ -1,13 +1,15 @@
 Package: stooq.com
-Title: Stooq Historical Price Data Client for R
+Title: API Client for stooq.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for Stooq historical price CSV downloads.
-    US/global stocks, indices, forex, commodities, bonds, crypto. Daily/weekly/
-    monthly OHLCV data. No API key required.
+Description: Self-contained API client for stooq.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: R (>= 4.1.0)
-Imports: httr2, dplyr, tibble
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

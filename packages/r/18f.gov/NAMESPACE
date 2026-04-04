@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(gsa_apis)
+export(gsa_hubs)
+export(gsa_search)
+export(gsa_list)
+export(gsa_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(moco_list)
+export(moco_search)
+export(moco_view)
+export(moco_query)
+export(moco_crime)
+export(moco_arrests)
+export(moco_crashes)
+export(moco_permits)
+export(moco_housing_violations)
+export(moco_police_incidents)
+export(moco_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

@@ -1,0 +1,17 @@
+Package: ctgov
+Title: State of Connecticut Open Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the Connecticut Socrata Open Data portal (data.ct.gov).
+    Provides discovery, search, and data access for mill rates, corrections,
+    licenses, and 629+ state datasets.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

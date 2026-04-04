@@ -1,0 +1,23 @@
+# Hand-maintained NAMESPACE
+
+export(mcaid_list)
+export(mcaid_search)
+export(mcaid_nadac)
+export(mcaid_nadac_comparison)
+export(mcaid_drug_products)
+export(mcaid_enrollment)
+export(mcaid_eligibility)
+export(mcaid_chip_enrollment)
+export(mcaid_ful)
+export(mcaid_managed_care)
+export(mcaid_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_timeout)
+importFrom(httr2, req_perform)
+importFrom(utils, read.csv)
+importFrom(utils, head)

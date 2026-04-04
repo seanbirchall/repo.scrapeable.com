@@ -97,3 +97,5 @@ NULL
 }
 
 
+
+utils::globalVariables(c("head","type"))

@@ -1,8 +1,8 @@
 Package: espn.com
-Title: ESPN Public Sports API Client
+Title: API Client for espn.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the ESPN public sports API. Get scores, standings, and team info for NFL, NBA, MLB, NHL, and soccer. Includes LLM context injection via espn_context().
+Description: Self-contained API client for espn.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

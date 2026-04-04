@@ -1,8 +1,8 @@
 Package: europepmc.org
-Title: Europe PMC Biomedical Literature API Client
+Title: API Client for europepmc.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Europe PMC API. Covers article search, article details, and citation retrieval.
+Description: Self-contained API client for europepmc.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

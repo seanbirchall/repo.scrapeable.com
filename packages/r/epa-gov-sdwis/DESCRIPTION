@@ -1,0 +1,10 @@
+Package: epa.gov.sdwis
+Title: R Client for EPA Safe Drinking Water
+Version: 0.1.0
+Authors@R: person("scrapeable.com", email = "dev@scrapeable.com", role = c("aut", "cre"))
+Description: Self-contained R client for the EPA Safe Drinking Water API. All public functions return tibbles with typed columns.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: httr2, jsonlite, dplyr, tibble

@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(nrc_list)
+export(nrc_search)
+export(nrc_reactor_status)
+export(nrc_reactor_status_current)
+export(nrc_findings)
+export(nrc_findings_summary)
+export(nrc_performance_indicators)
+export(nrc_action_matrix)
+export(nrc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(httr2, req_timeout)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

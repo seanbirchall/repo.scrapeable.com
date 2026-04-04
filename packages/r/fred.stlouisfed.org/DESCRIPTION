@@ -1,10 +1,8 @@
 Package: fred.stlouisfed.org
-Title: Federal Reserve Economic Data (FRED) API Client
+Title: API Client for fred.stlouisfed.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the FRED API from the Federal Reserve
-    Bank of St. Louis. Covers series observations, metadata, search, categories,
-    releases, and bulk fetching. Includes LLM context injection via fred_context().
+Description: Self-contained API client for fred.stlouisfed.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

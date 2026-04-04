@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(ac_datasets)
+export(ac_metadata)
+export(ac_query)
+export(ac_count)
+export(ac_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

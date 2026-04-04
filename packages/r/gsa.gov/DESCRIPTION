@@ -1,0 +1,13 @@
+Package: gsa.gov
+Title: General Services Administration API Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for GSA APIs. Access federal per diem travel
+    rates, City Pair airfares, Site Scanning data for federal websites, and the
+    GSA open data catalog. All functions return tibbles.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

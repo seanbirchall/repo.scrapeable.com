@@ -1,0 +1,9 @@
+Package: opentopography
+Title: R Client for opentopography API
+Version: 0.1.0
+Authors@R: person("scrapeable.com", email = "support@scrapeable.com", role = c("aut", "cre"))
+Description: Self-contained R client for the opentopography data API. All public functions return tibbles.
+License: MIT + file LICENSE
+Imports: httr2, jsonlite, dplyr, tibble
+Encoding: UTF-8
+RoxygenNote: 7.3.2

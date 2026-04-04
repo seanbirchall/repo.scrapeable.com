@@ -1,11 +1,8 @@
 Package: whitehouse.gov
-Title: OMB Historical Budget Data Client
+Title: API Client for whitehouse.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for OMB Historical Budget Tables from
-    whitehouse.gov. Covers budget totals, receipts, outlays, budget authority,
-    debt, and economic indicators from 1789 to present. Includes LLM context
-    injection via omb_context().
+Description: Self-contained API client for whitehouse.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,7 +10,7 @@ RoxygenNote: 7.3.2
 Depends: R (>= 4.1.0)
 Imports:
     httr2,
+    jsonlite,
     dplyr,
     tibble,
-    tidyr,
     readxl

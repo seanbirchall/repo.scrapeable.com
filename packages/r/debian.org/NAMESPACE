@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(dpkg_search)
+export(dpkg_info)
+export(dpkg_context)
+export(packages_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -1,0 +1,18 @@
+Package: uspto
+Title: USPTO (US Patent and Trademark Office) Data Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the USPTO Dataset API (DS-API). Provides
+    search and access to patent office actions, prior art citations, claim
+    rejections, and enriched citation metadata via the Solr-based REST API at
+    developer.uspto.gov.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

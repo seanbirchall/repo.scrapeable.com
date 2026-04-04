@@ -1,0 +1,21 @@
+# Hand-maintained NAMESPACE
+
+export(sf_list)
+export(sf_search)
+export(sf_view)
+export(sf_query)
+export(sf_fetch_all)
+export(sf_police_incidents)
+export(sf_311_cases)
+export(sf_fire_incidents)
+export(sf_budget)
+export(sf_permits)
+export(sf_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

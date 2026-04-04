@@ -1,0 +1,13 @@
+Package: ftc.gov
+Title: Federal Trade Commission API Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the FTC public API.
+    HSR early termination notices (Hart-Scott-Rodino merger reviews).
+    Requires API key from api.ftc.gov (DEMO_KEY works for testing).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

@@ -1,8 +1,8 @@
 Package: newyorkfed.org
-Title: New York Fed Markets Data API Client
+Title: API Client for newyorkfed.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the New York Fed Markets API. Covers SOFR, EFFR reference rates, and Treasury operations. Includes LLM context injection via nyfed_context().
+Description: Self-contained API client for newyorkfed.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

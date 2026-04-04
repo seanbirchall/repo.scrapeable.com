@@ -1,8 +1,8 @@
 Package: gdacs.org
-Title: GDACS Disaster Alert API Client
+Title: API Client for gdacs.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the GDACS API. Covers earthquake, cyclone, flood, and volcano event search. Includes LLM context injection via gdacs_context().
+Description: Self-contained API client for gdacs.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -12,4 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
+    tibble,
+    tidyr

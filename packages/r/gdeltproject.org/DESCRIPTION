@@ -1,9 +1,8 @@
 Package: gdeltproject.org
-Title: GDELT Project News Monitoring
+Title: API Client for gdeltproject.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for gdeltproject.org.
-    Includes LLM context injection via gdelt_context().
+Description: Self-contained API client for gdeltproject.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

@@ -125,3 +125,5 @@ NULL
 }
 
 
+
+utils::globalVariables(c("description","head","keyword","modified","title"))

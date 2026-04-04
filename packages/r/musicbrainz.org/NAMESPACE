@@ -1,3 +1,5 @@
+# Hand-maintained NAMESPACE
+
 export(mb_artists)
 export(mb_releases)
 export(mb_recordings)
@@ -10,4 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

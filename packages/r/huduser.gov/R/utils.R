@@ -1,0 +1,7 @@
+#' @import dplyr
+#' @importFrom tibble tibble as_tibble
+#' @importFrom httr2 request req_headers req_perform
+#' @importFrom jsonlite fromJSON
+#' @importFrom readxl  read_excel
+#' @keywords internal
+NULL

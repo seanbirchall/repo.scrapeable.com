@@ -1,0 +1,15 @@
+# Auto-generated NAMESPACE
+
+export(hd_filings)
+export(hd_pdf_text)
+export(hd_parse_transactions)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(xml2, read_xml)
+importFrom(xml2, read_html)

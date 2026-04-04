@@ -1,0 +1,9 @@
+Package: nyc.gov
+Title: R Client for nyc.gov API
+Version: 0.1.0
+Authors@R: person("scrapeable.com", email = "support@scrapeable.com", role = c("aut", "cre"))
+Description: Self-contained R client for the nyc.gov data API. All public functions return tibbles.
+License: MIT + file LICENSE
+Imports: httr2, jsonlite, dplyr, tibble, xml2, readxl
+Encoding: UTF-8
+RoxygenNote: 7.3.2

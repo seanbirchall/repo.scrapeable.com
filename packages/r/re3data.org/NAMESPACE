@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(re3_search)
+export(re3_repository)
+export(re3_list)
+export(re3data_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)
+importFrom(xml2, read_xml)
+importFrom(xml2, read_html)

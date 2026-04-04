@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(nyctmc_speeds)
+export(nyctmc_links)
+export(nyctmc_borough)
+export(nyctmc_search)
+export(nyctmc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

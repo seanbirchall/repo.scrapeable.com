@@ -1,3 +1,6 @@
+
+
+
 # data-worldbank-org.R
 # Self-contained World Bank Data API client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,41 +9,10 @@
 # Auth: none required
 # API: https://api.worldbank.org/v2
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
-
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .wb_base <- "https://api.worldbank.org/v2"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
 
 .fetch <- function(url, ext = ".json") {
   tmp <- tempfile(fileext = ext)
@@ -95,6 +67,7 @@ library(tibble)
 #' @param per_page Results per page (default 1000)
 #' @return tibble: country_iso3, country, indicator_id, indicator,
 #'   date (character year), value (numeric)
+#' @export
 wb_data <- function(indicator, country = "all", date_range = NULL,
                     per_page = 1000) {
   country_str <- paste(country, collapse = ";")
@@ -137,6 +110,7 @@ wb_data <- function(indicator, country = "all", date_range = NULL,
 #' @param per_page Results per page (default 300)
 #' @return tibble: iso3, iso2, name, region, income_level, capital,
 #'   longitude, latitude
+#' @export
 wb_countries <- function(per_page = 300) {
   url <- sprintf("%s/country?format=json&per_page=%d", .wb_base, per_page)
   result <- .fetch_wb(url)
@@ -160,9 +134,10 @@ wb_countries <- function(per_page = 300) {
 #' Search World Bank indicators
 #'
 #' @param query Search term (e.g. "GDP", "population", "inflation")
-#' @param per_page Results per page (default 100)
+#' @param per_page Results per page (default 1000)
 #' @param page Page number (default 1)
 #' @return tibble: id, name, unit, source, source_note
+#' @export
 wb_indicators <- function(query = NULL, per_page = 1000, page = 1) {
   url <- sprintf("%s/indicator?format=json&per_page=%d&page=%d",
                  .wb_base, per_page, page)
@@ -191,25 +166,44 @@ wb_indicators <- function(query = NULL, per_page = 1000, page = 1) {
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the World Bank package
+#' Generate LLM-friendly context for data.worldbank.org
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 wb_context <- function() {
-  .build_context("data.worldbank.org", header_lines = c(
-    "# data.worldbank.org - World Bank Data API Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: none required",
-    "# All functions return tibbles with typed columns.",
-    "#",
-    "# 29,500+ indicators, 296 countries/regions",
-    "#",
-    "# Common indicators:",
-    "#   NY.GDP.MKTP.CD = GDP (current US$)",
-    "#   SP.POP.TOTL = Population",
-    "#   FP.CPI.TOTL.ZG = Inflation (CPI %)",
-    "#   SL.UEM.TOTL.ZS = Unemployment (%)",
-    "#   NY.GDP.PCAP.CD = GDP per capita",
-    "#",
-    "# Country codes: ISO2 (US, GB, DE, JP, CN)"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.worldbank.org.R"
+  if (!file.exists(src_file)) {
+    cat("# data.worldbank.org context - source not found\n")
+    return(invisible("# data.worldbank.org context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

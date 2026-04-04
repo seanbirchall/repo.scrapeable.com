@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(fvap_list)
+export(fvap_data)
+export(fvap_sheets)
+export(fvap_summary)
+export(fvap_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(readxl, read_excel)
+importFrom(readxl, excel_sheets)

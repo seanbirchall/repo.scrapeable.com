@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(arl_endpoints)
+export(arl_query)
+export(arl_businesses)
+export(arl_sales)
+export(arl_service_requests)
+export(arl_trade_names)
+export(arl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

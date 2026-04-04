@@ -1,13 +1,18 @@
-export(stooq_context)
-export(stooq_forex)
+# Hand-maintained NAMESPACE
+
 export(stooq_history)
 export(stooq_history_bulk)
-export(stooq_index)
 export(stooq_stock)
+export(stooq_index)
+export(stooq_forex)
 export(stooq_yield)
+export(stooq_context)
+
 import(dplyr)
 importFrom(tibble, tibble)
 importFrom(tibble, as_tibble)
 importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

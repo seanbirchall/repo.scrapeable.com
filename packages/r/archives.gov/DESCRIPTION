@@ -1,0 +1,13 @@
+Package: archives.gov
+Title: National Archives (NARA) Client for R
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for National Archives open datasets and
+    Catalog API. Proposed Constitutional amendments (1787-2014), NHPRC grants,
+    Nixon White House Tapes, and Catalog search (requires API key).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: httr2, jsonlite, dplyr, tibble

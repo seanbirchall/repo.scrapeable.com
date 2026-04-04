@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(exo_planets)
+export(exo_stars)
+export(exo_habitable)
+export(exo_discoveries)
+export(exoplanetarchive_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

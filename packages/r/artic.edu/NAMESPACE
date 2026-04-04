@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(artic_artworks)
+export(artic_search)
+export(artic_artwork)
+export(artic_artists)
+export(artic_exhibitions)
+export(artic_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)
+import(tidyr)

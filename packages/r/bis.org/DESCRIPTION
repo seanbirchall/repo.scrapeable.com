@@ -1,14 +1,16 @@
 Package: bis.org
-Title: Bank for International Settlements Data Client for R
+Title: API Client for bis.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for BIS statistical data (SDMX API).
-    Central bank policy rates, effective exchange rates, property prices,
-    debt securities, central bank assets. 29 dataflows covering global
-    financial and economic statistics.
+Description: Self-contained API client for bis.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: R (>= 4.1.0)
-Imports: httr2, xml2, dplyr, tibble
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble,
+    xml2

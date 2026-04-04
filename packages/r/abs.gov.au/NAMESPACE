@@ -2,6 +2,7 @@
 
 export(abs_data)
 export(abs_dataflows)
+export(abs_cpi)
 export(abs_context)
 
 import(dplyr)

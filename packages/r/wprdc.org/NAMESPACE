@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(wprdc_search)
+export(wprdc_list)
+export(wprdc_package)
+export(wprdc_data)
+export(wprdc_sql)
+export(wprdc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(jsonlite, toJSON)
+importFrom(utils, URLencode)

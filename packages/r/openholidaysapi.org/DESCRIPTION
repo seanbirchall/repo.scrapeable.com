@@ -1,8 +1,8 @@
 Package: openholidaysapi.org
-Title: Public and School Holiday Data Client
+Title: API Client for openholidaysapi.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Public and School Holiday Data Client
+Description: Self-contained API client for openholidaysapi.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

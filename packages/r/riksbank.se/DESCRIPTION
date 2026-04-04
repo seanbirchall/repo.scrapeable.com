@@ -1,8 +1,8 @@
 Package: riksbank.se
-Title: Riksbank SWEA API Client
+Title: API Client for riksbank.se
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Swedish Riksbank SWEA API. Covers exchange rates, interest rates, and series listings.
+Description: Self-contained API client for riksbank.se. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -13,4 +13,3 @@ Imports:
     jsonlite,
     dplyr,
     tibble
-

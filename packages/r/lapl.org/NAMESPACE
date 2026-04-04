@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(lapl_list)
+export(lapl_titles)
+export(lapl_new_titles)
+export(lapl_hot_titles)
+export(lapl_search)
+export(lapl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(xml2, read_xml)
+importFrom(xml2, xml_find_all)
+importFrom(xml2, xml_find_first)
+importFrom(xml2, xml_text)

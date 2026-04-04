@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(pbgc_list)
+export(pbgc_trusteed_plans)
+export(pbgc_multiemployer_plans)
+export(pbgc_search)
+export(pbgc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(readxl, read_excel)

@@ -1,0 +1,15 @@
+Package: doe.gov
+Title: DOE Energy Data eXchange (EDX) API Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the DOE Energy Data eXchange (EDX) CKAN API at edx.netl.doe.gov. Covers dataset search, individual dataset metadata, resource listings, tag browsing, and dataset counts across 18000+ energy research datasets.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

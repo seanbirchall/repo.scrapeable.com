@@ -3,6 +3,7 @@
 export(encode_search)
 export(encode_experiment)
 export(encode_files)
+export(encode_biosamples)
 export(encode_context)
 
 import(dplyr)
@@ -12,5 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
-
+importFrom(utils, read.csv)

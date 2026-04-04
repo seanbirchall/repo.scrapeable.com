@@ -2,6 +2,8 @@
 
 export(figshare_search)
 export(figshare_article)
+export(figshare_files)
+export(figshare_collections)
 export(figshare_context)
 
 import(dplyr)
@@ -11,4 +13,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(httr2, req_body_json)
+importFrom(utils, read.csv)

@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(ensembl_gene)
+export(ensembl_lookup)
+export(ensembl_sequence)
+export(ensembl_variant)
+export(ensembl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

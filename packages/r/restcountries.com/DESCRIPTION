@@ -1,8 +1,8 @@
 Package: restcountries.com
-Title: REST Countries API Client
+Title: API Client for restcountries.com
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the REST Countries v3.1 API. Get country data by name, code, or region. Includes LLM context injection via rc_context().
+Description: Self-contained API client for restcountries.com. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -12,4 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
+    tibble,
+    tidyr

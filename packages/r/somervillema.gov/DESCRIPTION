@@ -1,0 +1,18 @@
+Package: somervillema.gov
+Title: City of Somerville Open Data (Socrata SODA) Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for the City of Somerville Open Data portal
+    (data.somervillema.gov). Query 27 Socrata datasets including police CAD,
+    crime reports, 311 requests, permits, citations, happiness surveys, and more.
+    Includes LLM context injection via somer_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

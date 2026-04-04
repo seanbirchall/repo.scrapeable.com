@@ -1,11 +1,13 @@
-# Hand-maintained NAMESPACE
-
 export(fr_search)
 export(fr_document)
+export(fr_documents)
 export(fr_agencies)
+export(fr_agency)
+export(fr_executive_orders)
 export(fr_public_inspection)
+export(fr_rules)
+export(fr_proposed_rules)
 export(fr_context)
-
 import(dplyr)
 importFrom(tibble, tibble)
 importFrom(tibble, as_tibble)
@@ -13,4 +15,3 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)

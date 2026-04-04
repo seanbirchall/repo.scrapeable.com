@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(dc_search)
+export(dc_list)
+export(dc_data)
+export(dc_crime)
+export(dc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

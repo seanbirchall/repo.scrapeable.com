@@ -1,0 +1,22 @@
+# Auto-generated NAMESPACE
+
+export(nyc_list)
+export(nyc_search)
+export(nyc_marinas)
+export(nyc_nature_preserves)
+export(nyc_street_changes)
+export(nyc_parking)
+export(nyc_highway_cleanliness)
+export(nyc_low_bridges)
+export(nyc_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(xml2, read_xml)
+importFrom(xml2, read_html)
+importFrom(readxl, read_excel)

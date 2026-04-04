@@ -1,3 +1,10 @@
+# data.cdc.gov.R
+# Self-contained data.cdc.gov client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+
+
 # cdc-gov.R
 # Self-contained CDC Open Data (Socrata SODA) client.
 # All public functions return tibbles.
@@ -7,45 +14,12 @@
 # Rate limits: Without token: throttled. With token: higher limits.
 # Docs: https://dev.socrata.com/docs/queries/
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 .ua <- "support@scrapeable.com"
 .cdc_base <- "https://data.cdc.gov"
-
-# -- Context generator ---------------------------------------------------------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
-
 # -- SODA query engine ---------------------------------------------------------
 
 .cdc_get <- function(dataset_id, where = NULL, select = NULL, group = NULL,
@@ -91,6 +65,7 @@ library(tibble)
 }
 
 
+
 # == Dataset discovery =========================================================
 
 #' Search CDC datasets by keyword
@@ -100,6 +75,7 @@ library(tibble)
 #' @param query Search keyword (e.g. "covid", "mortality", "vaccination")
 #' @param max_results Max datasets to return (default 20)
 #' @return tibble: id, name, description, type, updated_at, columns
+#' @export
 cdc_search <- function(query, max_results = 20) {
   url <- sprintf("%s/api/catalog/v1?q=%s&limit=%d&domains=data.cdc.gov&search_context=data.cdc.gov",
                  .cdc_base, utils::URLencode(query), max_results)
@@ -130,6 +106,7 @@ cdc_search <- function(query, max_results = 20) {
 #'
 #' @param dataset_id Socrata dataset ID (e.g. "vbim-akqf")
 #' @return tibble: field_name, name, datatype, description
+#' @export
 cdc_columns <- function(dataset_id) {
   url <- sprintf("%s/api/views/%s.json", .cdc_base, dataset_id)
   tmp <- tempfile(fileext = ".json")
@@ -167,6 +144,7 @@ cdc_columns <- function(dataset_id) {
 #' @param token Optional Socrata app token
 #' @param max_results Max rows (default 1000)
 #' @return tibble with all columns as character (Socrata returns strings)
+#' @export
 cdc_get <- function(dataset_id, where = NULL, select = NULL,
                     group = NULL, order = NULL, token = NULL,
                     max_results = 1000) {
@@ -188,6 +166,7 @@ cdc_get <- function(dataset_id, where = NULL, select = NULL,
 #' @param token Socrata app token
 #' @param max_results Max results (default 1000)
 #' @return tibble of COVID-19 case records
+#' @export
 cdc_covid_cases <- function(state = NULL, sex = NULL, age_group = NULL,
                             where = NULL, token = NULL, max_results = 1000) {
   parts <- character()
@@ -206,6 +185,7 @@ cdc_covid_cases <- function(state = NULL, sex = NULL, age_group = NULL,
 #' @param token Socrata app token
 #' @param max_results Max results (default 1000)
 #' @return tibble of vaccination counts by date and jurisdiction
+#' @export
 cdc_covid_vaccinations <- function(location = NULL, token = NULL,
                                    max_results = 1000) {
   where <- if (!is.null(location)) sprintf("location='%s'", location) else NULL
@@ -223,6 +203,7 @@ cdc_covid_vaccinations <- function(location = NULL, token = NULL,
 #' @param token Socrata app token
 #' @param max_results Max results (default 1000)
 #' @return tibble of weekly disease counts by state
+#' @export
 cdc_nndss <- function(disease = NULL, year = NULL, token = NULL,
                       max_results = 1000) {
   parts <- character()
@@ -244,6 +225,7 @@ cdc_nndss <- function(disease = NULL, year = NULL, token = NULL,
 #' @param token Socrata app token
 #' @param max_results Max results (default 1000)
 #' @return tibble of weekly mortality counts
+#' @export
 cdc_mortality <- function(jurisdiction = NULL, cause = NULL, year = NULL,
                           token = NULL, max_results = 1000) {
   parts <- character()
@@ -266,6 +248,7 @@ cdc_mortality <- function(jurisdiction = NULL, cause = NULL, year = NULL,
 #' @param token Socrata app token
 #' @param max_results Max results (default 1000)
 #' @return tibble of weekly ILI rates by region
+#' @export
 cdc_flu <- function(region = NULL, year = NULL, token = NULL,
                     max_results = 1000) {
   parts <- character()
@@ -279,29 +262,44 @@ cdc_flu <- function(region = NULL, year = NULL, token = NULL,
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the data.cdc.gov package
+#' Generate LLM-friendly context for data.cdc.gov
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 cdc_context <- function() {
-  .build_context("data.cdc.gov", header_lines = c(
-    "# data.cdc.gov - CDC Open Data (Socrata SODA) Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: optional Socrata app token (reduces throttling)",
-    "# All functions return tibbles. Uses SoQL query language.",
-    "#",
-    "# Key dataset IDs:",
-    "#   vbim-akqf = COVID-19 Case Surveillance",
-    "#   unsk-b7fc = COVID-19 Vaccinations by Jurisdiction",
-    "#   x9gk-5huc = NNDSS Weekly Disease Tables",
-    "#   muzy-jte6 = Provisional Mortality Counts",
-    "#   ite7-j2w7 = ILINet Flu Surveillance",
-    "#",
-    "# SoQL syntax (use in `where` param):",
-    "#   field='value'           exact match",
-    "#   field like '%pattern%'  partial match",
-    "#   field > '2024-01-01'    comparison",
-    "#   field IS NOT NULL       null check",
-    "#   Use cdc_search('keyword') to discover datasets.",
-    "#   Use cdc_columns('dataset-id') to see available fields."
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.cdc.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# data.cdc.gov context - source not found\n")
+    return(invisible("# data.cdc.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

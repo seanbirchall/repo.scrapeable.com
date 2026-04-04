@@ -1,12 +1,8 @@
 Package: census.gov
-Title: US Census Bureau API Client
+Title: API Client for census.gov
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the US Census Bureau API. Covers ACS
-    (1-year and 5-year detailed, subject, profile, comparison tables), decennial
-    census (PL, DHC, DP, SF1, SF2), population estimates (PEP), economic census,
-    PUMS microdata, and migration flows. Includes variable discovery, search,
-    geography helpers, and LLM context injection.
+Description: Self-contained API client for census.gov. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,5 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tidyr,
-    tibble
+    tibble,
+    tidyr

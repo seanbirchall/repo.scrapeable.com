@@ -1,3 +1,6 @@
+
+
+
 # data-ssb-no.R
 # Self-contained SSB (Statistics Norway) PxWeb API client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,46 +9,11 @@
 # Auth: none required
 # Rate limits: not documented, be courteous
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .ssb_base <- "https://data.ssb.no/api/v0/en/table"
-
-# -- Context generator (reads roxygen + signatures from inst/source/) ----------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
-
 # -- Fetch helpers -------------------------------------------------------------
 
 .fetch <- function(url, ext = ".json") {
@@ -82,6 +50,7 @@ library(tibble)
   dimension = character(), value = character()
 )
 
+
 # == Public functions ==========================================================
 
 #' Browse SSB statistical tables
@@ -92,6 +61,7 @@ library(tibble)
 #' @param path Path in the table tree. Empty string for root categories.
 #'   Use table IDs directly for specific tables (e.g. "07459").
 #' @return tibble: id, type ("l" = folder), text
+#' @export
 ssb_tables <- function(path = "") {
   url <- if (nchar(path) > 0) {
     sprintf("%s/%s", .ssb_base, path)
@@ -124,6 +94,7 @@ ssb_tables <- function(path = "") {
 #'
 #' @param table_id Table ID (e.g. "07459" for population)
 #' @return tibble: code, text, n_values, values_sample (first 5 values as comma-separated string)
+#' @export
 ssb_metadata <- function(table_id) {
   url <- sprintf("%s/%s", .ssb_base, table_id)
   raw <- jsonlite::fromJSON(.fetch(url), simplifyVector = FALSE)
@@ -154,6 +125,7 @@ ssb_metadata <- function(table_id) {
 #'   Example: list(list(code="Region", selection=list(filter="item", values=list("0"))))
 #' @param format Response format: "json-stat2" (default) or "csv"
 #' @return tibble with dimensions and values from the query result
+#' @export
 ssb_query <- function(table_id, query = list(), format = "json-stat2") {
   url <- sprintf("%s/%s", .ssb_base, table_id)
   body <- list(query = query, response = list(format = format))
@@ -195,20 +167,46 @@ ssb_query <- function(table_id, query = list(), format = "json-stat2") {
   as_tibble(grid)
 }
 
-#' SSB API context for LLM use
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for data.ssb.no
 #'
-#' Prints package overview, auth info, and function signatures.
-#' @return Invisible string with context info
+#' @return Character string with full function signatures and bodies
+#' @export
 ssb_context <- function() {
-  header <- c(
-    "# data.ssb.no - Statistics Norway (SSB) PxWeb API Client",
-    "# Deps: httr2, jsonlite, dplyr, tibble",
-    "# Auth: none required",
-    "# Rate limits: not documented",
-    "#",
-    "# Top categories: al=Labour, bf=Banking, be=Population, ei=Energy",
-    "# Key tables: 07459=Population, 09786=CPI, 09842=GDP",
-    "# Typical flow: ssb_tables() -> ssb_metadata(id) -> ssb_query(id, query)"
-  )
-  .build_context("data.ssb.no", header_lines = header)
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.ssb.no.R"
+  if (!file.exists(src_file)) {
+    cat("# data.ssb.no context - source not found\n")
+    return(invisible("# data.ssb.no context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

@@ -1,8 +1,8 @@
 Package: mediawiki.org
-Title: Wikipedia / MediaWiki API Client
+Title: API Client for mediawiki.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the MediaWiki action API. Search Wikipedia articles and fetch page extracts across any language edition. Includes LLM context injection via wiki_context().
+Description: Self-contained API client for mediawiki.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

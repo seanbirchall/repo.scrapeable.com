@@ -1,3 +1,6 @@
+
+
+
 # rest-ensembl-org.R
 # Self-contained Ensembl REST API client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,37 +9,9 @@
 # Auth: none required
 # API: https://rest.ensembl.org
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 .ua <- "support@scrapeable.com"
 .ensembl_base <- "https://rest.ensembl.org"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE); n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi]); if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
 
 .fetch <- function(url, ext = ".json") {
   tmp <- tempfile(fileext = ext)
@@ -61,12 +36,14 @@ library(tibble)
   maf = numeric()
 )
 
+
 #' Look up a gene by symbol
 #'
 #' @param symbol Gene symbol (e.g. "BRCA2", "TP53")
 #' @param species Species (default "homo_sapiens")
 #' @return tibble: one row with id, display_name, species, biotype,
 #'   description, start, end, strand, seq_region_name
+#' @export
 ensembl_gene <- function(symbol, species = "homo_sapiens") {
   url <- sprintf("%s/lookup/symbol/%s/%s?content-type=application/json",
                  .ensembl_base, species, symbol)
@@ -86,6 +63,7 @@ ensembl_gene <- function(symbol, species = "homo_sapiens") {
 #'
 #' @param id Ensembl ID (e.g. "ENSG00000139618")
 #' @return tibble: same columns as ensembl_gene
+#' @export
 ensembl_lookup <- function(id) {
   url <- sprintf("%s/lookup/id/%s?content-type=application/json", .ensembl_base, id)
   raw <- tryCatch(.fetch_json(url), error = function(e) { warning("Ensembl error: ", e$message); NULL })
@@ -105,6 +83,7 @@ ensembl_lookup <- function(id) {
 #' @param id Ensembl ID
 #' @param type "genomic" (default), "cdna", "cds", "protein"
 #' @return tibble: one row with id, seq (character), molecule_type
+#' @export
 ensembl_sequence <- function(id, type = "genomic") {
   url <- sprintf("%s/sequence/id/%s?type=%s&content-type=application/json",
                  .ensembl_base, id, type)
@@ -119,6 +98,7 @@ ensembl_sequence <- function(id, type = "genomic") {
 #' @param rsid Variant ID (e.g. "rs699")
 #' @param species Species (default "homo_sapiens")
 #' @return tibble: id, consequence_type, alleles, minor_allele, maf
+#' @export
 ensembl_variant <- function(rsid, species = "homo_sapiens") {
   url <- sprintf("%s/variation/%s/%s?content-type=application/json",
                  .ensembl_base, species, rsid)
@@ -133,13 +113,46 @@ ensembl_variant <- function(rsid, species = "homo_sapiens") {
   )
 }
 
-#' Generate context
-#' @return Character string (invisibly)
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for rest.ensembl.org
+#'
+#' @return Character string with full function signatures and bodies
+#' @export
 ensembl_context <- function() {
-  .build_context("rest.ensembl.org", header_lines = c(
-    "# rest.ensembl.org - Ensembl Genomics REST Client for R",
-    "# Auth: none required. Rate limit: 15 req/sec.",
-    "# Gene lookup, sequence retrieval, variant annotation.",
-    "# Species: homo_sapiens, mus_musculus, etc."
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/rest.ensembl.org.R"
+  if (!file.exists(src_file)) {
+    cat("# rest.ensembl.org context - source not found\n")
+    return(invisible("# rest.ensembl.org context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

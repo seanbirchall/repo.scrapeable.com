@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(cms_datasets)
+export(cms_search)
+export(cms_get)
+export(cms_hospitals)
+export(cms_hospital_quality)
+export(cms_nursing_homes)
+export(cms_dialysis)
+export(cms_home_health)
+export(cms_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(ark_services)
+export(ark_layers)
+export(ark_datasets)
+export(ark_query)
+export(ark_senate_districts)
+export(ark_hospitals)
+export(ark_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

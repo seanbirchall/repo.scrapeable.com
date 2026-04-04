@@ -1,0 +1,16 @@
+# Hand-maintained NAMESPACE
+
+export(oecd_data)
+export(oecd_fetch)
+export(oecd_dataflows_popular)
+export(oecd_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)
+import(tidyr)

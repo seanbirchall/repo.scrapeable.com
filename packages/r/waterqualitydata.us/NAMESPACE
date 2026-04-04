@@ -2,6 +2,8 @@
 
 export(wqp_results)
 export(wqp_stations)
+export(wqp_characteristics)
+export(wqp_station_detail)
 export(wqp_context)
 
 import(dplyr)
@@ -10,5 +12,5 @@ importFrom(tibble, as_tibble)
 importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
-importFrom(utils, URLencode)
-importFrom(httr2, req_timeout)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

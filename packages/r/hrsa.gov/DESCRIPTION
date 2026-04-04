@@ -1,0 +1,16 @@
+Package: hrsa.gov
+Title: HRSA Health Professional Shortage Areas and Health Centers Client
+Version: 0.1.0
+Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
+Description: Self-contained client for HRSA data. Access Health Professional Shortage Areas (HPSAs) and
+    Health Center site data. Includes LLM context injection via hrsa_context().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    httr2,
+    jsonlite,
+    dplyr,
+    tibble

@@ -1,13 +1,79 @@
+# registry.npmjs.org.R - Self-contained registry.npmjs.org client
+
+
+
+# registry-npmjs-org.R
+# Self-contained npm registry API client.
+# All public functions return tibbles. All columns properly typed.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+# Auth: none required
+# Rate limits: none documented
+
+
+# == Private utilities =========================================================
+
+.ua <- "support@scrapeable.com"
+.npm_base <- "https://registry.npmjs.org"
+
+`%||%` <- function(a, b) if (is.null(a)) b else a
+# -- Fetch helpers -------------------------------------------------------------
+
+.fetch <- function(url, ext = ".json") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = .ua) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
+
+.fetch_json <- function(url) jsonlite::fromJSON(.fetch(url))
+
+# == Schemas ===================================================================
+
+.schema_search <- tibble(
+  name = character(), version = character(), description = character(),
+  keywords = character(), date = as.POSIXct(character()),
+  author = character(), publisher = character(), links_npm = character()
+)
+
+.schema_package <- tibble(
+  name = character(), version = character(), description = character(),
+  license = character(), homepage = character(), repository = character(),
+  created = as.POSIXct(character()), modified = as.POSIXct(character()),
+  dependencies = character()
+)
+
 
 # == Search ====================================================================
 
-#' Search npm registry for packages
+#' Search the npm registry for packages
 #'
-#' @param text Search query string
-#' @param size Number of results to return (default 20, max 250)
-#' @return tibble: name, version, description, keywords, date, author,
-#'   publisher, links_npm
+#' Queries the npm registry search endpoint for JavaScript / Node.js
+#' packages matching a free-text query. Results are ranked by npm's
+#' internal relevance scoring (popularity, quality, maintenance).
+#'
+#' @param text Free-text search query (e.g. \code{"express"},
+#'   \code{"react state management"}).
+#' @param size Number of results to return (default 20, maximum 250).
+#' @return A tibble with columns:
+#'   \describe{
+#'     \item{name}{Package name on npm (character).}
+#'     \item{version}{Latest published version string (character).}
+#'     \item{description}{Short package description (character).}
+#'     \item{keywords}{Comma-separated keywords (character).}
+#'     \item{date}{Date/time of the latest publish (POSIXct).}
+#'     \item{author}{Author name, if declared (character).}
+#'     \item{publisher}{npm username of the latest publisher (character).}
+#'     \item{links_npm}{URL to the npm package page (character).}
+#'   }
 #' @export
+#' @seealso \code{\link{npm_package}}
+#' @examples
+#' \dontrun{
+#' npm_search("express", size = 5)
+#' npm_search("react state management")
+#' }
 npm_search <- function(text, size = 20) {
   url <- sprintf("%s/-/v1/search?text=%s&size=%d",
                  .npm_base, utils::URLencode(text), as.integer(size))
@@ -30,15 +96,35 @@ npm_search <- function(text, size = 20) {
 
 # == Package metadata ==========================================================
 
-#' Get npm package metadata
+#' Get detailed metadata for an npm package
 #'
-#' Returns metadata for a specific npm package including latest version,
-#' description, license, homepage, and dependencies.
+#' Fetches the full registry document for a single npm package and
+#' extracts metadata from the latest published version. Includes the
+#' license, homepage, source repository URL, creation and modification
+#' timestamps, and a comma-separated list of runtime dependencies.
 #'
-#' @param name Package name (e.g. "express", "react", "lodash")
-#' @return tibble: name, version, description, license, homepage,
-#'   repository, created, modified, dependencies
+#' @param name Exact package name on npm (e.g. \code{"express"},
+#'   \code{"react"}, \code{"lodash"}). Scoped packages use the form
+#'   \code{"@scope/name"}.
+#' @return A tibble with one row and columns:
+#'   \describe{
+#'     \item{name}{Package name (character).}
+#'     \item{version}{Latest published version (character).}
+#'     \item{description}{Package description (character).}
+#'     \item{license}{SPDX license identifier (character).}
+#'     \item{homepage}{Project homepage URL (character).}
+#'     \item{repository}{Source repository URL (character).}
+#'     \item{created}{Date/time the package was first published (POSIXct).}
+#'     \item{modified}{Date/time of the most recent publish (POSIXct).}
+#'     \item{dependencies}{Comma-separated runtime dependency names (character).}
+#'   }
 #' @export
+#' @seealso \code{\link{npm_search}}
+#' @examples
+#' \dontrun{
+#' npm_package("express")
+#' npm_package("@anthropic-ai/sdk")
+#' }
 npm_package <- function(name) {
   url <- sprintf("%s/%s", .npm_base, utils::URLencode(name))
   raw <- tryCatch(.fetch_json(url), error = function(e) {
@@ -65,17 +151,50 @@ npm_package <- function(name) {
   )
 }
 
-# == Context (LLM injection) ==================================================
+# == Context ===================================================================
 
-#' Generate LLM-friendly context for the registry.npmjs.org package
+#' Get registry.npmjs.org client context for LLM use
 #'
-#' @return Character string (invisibly), also printed
+#' Returns roxygen documentation and function signatures for all public
+#' functions. Shows each function's purpose, parameters, and return type
+#' without implementation. Use `function_name` (no parens) to see source,
+#' or `?function_name` for help.
+#'
+#' @return Character string (printed and returned invisibly)
 #' @export
 npm_context <- function() {
-  .build_context("registry.npmjs.org", header_lines = c(
-    "# registry.npmjs.org - npm Registry API Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: none required",
-    "# All functions return tibbles with typed columns."
-  ))
+  src_file <- NULL
+  tryCatch({
+    env <- environment(npm_context)
+    src <- attr(env, "srcfile")
+    if (!is.null(src)) src_file <<- src$filename
+  }, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) src_file <- "clients/registry.npmjs.org.R"
+  if (is.null(src_file) || !file.exists(src_file)) {
+    pkg_src <- system.file("source", package = "registry.npmjs.org")
+    if (nzchar(pkg_src)) {
+      sf <- list.files(pkg_src, pattern = "[.]R$", full.names = TRUE)
+      if (length(sf)) src_file <- sf[1]
+    }
+  }
+  if (!file.exists(src_file)) { cat("# registry.npmjs.org context - source not found\n"); return(invisible("")) }
+
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_idx <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_idx) {
+    fn <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn, ".")) next
+    j <- fi - 1; rs <- fi
+    while (j > 0 && grepl("^#\047", lines[j])) { rs <- j; j <- j - 1 }
+    rox <- if (rs < fi) lines[rs:(fi - 1)] else character()
+    rox <- rox[!grepl("^#\047 @export|^#\047 @keywords", rox)]
+    sig <- lines[fi]; k <- fi
+    while (!grepl("[{]", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
+    sig <- sub("[[:space:]]*[{][[:space:]]*$", "", sig)
+    blocks[[length(blocks) + 1]] <- c(rox, sig, paste0("  Run `", fn, "` to view source or `?", fn, "` for help."), "")
+  }
+  out <- paste(c("# registry.npmjs.org", "# R API Client", "#", "# == Public Functions ==", "#", unlist(blocks)), collapse = "\n")
+  cat(out, "\n"); invisible(out)
 }

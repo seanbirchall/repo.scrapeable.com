@@ -1,0 +1,15 @@
+# Hand-maintained NAMESPACE
+
+export(tfl_lines)
+export(tfl_arrivals)
+export(tfl_stops)
+export(tfl_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

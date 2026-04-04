@@ -2,6 +2,9 @@
 
 export(off_search)
 export(off_product)
+export(off_nutrition)
+export(off_category)
+export(off_compare)
 export(off_context)
 
 import(dplyr)
@@ -11,4 +14,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
-importFrom(utils, URLencode)
+importFrom(utils, read.csv)

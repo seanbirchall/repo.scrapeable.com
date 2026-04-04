@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(sf_datasets)
+export(sf_search)
+export(sf_data)
+export(sf_violent_crimes)
+export(sf_sales_tax)
+export(sf_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

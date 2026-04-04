@@ -2,6 +2,7 @@
 
 export(poly_markets)
 export(poly_market)
+export(poly_events)
 export(poly_context)
 
 import(dplyr)
@@ -11,3 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

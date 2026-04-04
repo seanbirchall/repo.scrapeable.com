@@ -1,0 +1,20 @@
+# Hand-maintained NAMESPACE
+
+export(docg_list)
+export(docg_search)
+export(docg_spectrum)
+export(docg_spectrum_5ghz)
+export(docg_spectrum_summary)
+export(docg_spectrum_by_agency)
+export(docg_digital_nation)
+export(docg_digital_nation_summary)
+export(docg_digital_nation_variables)
+export(docg_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(utils, read.csv)

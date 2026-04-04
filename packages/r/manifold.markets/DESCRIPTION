@@ -1,9 +1,8 @@
 Package: manifold.markets
-Title: Manifold Markets Prediction API Client
+Title: API Client for manifold.markets
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Manifold Markets API. Browse and search prediction markets.
-    Includes LLM context injection via mfld_context().
+Description: Self-contained API client for manifold.markets. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

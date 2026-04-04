@@ -1,8 +1,8 @@
 Package: frankfurter.app
-Title: Exchange Rate Client (ECB data via Frankfurter)
+Title: API Client for frankfurter.app
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Exchange Rate Client (ECB data via Frankfurter)
+Description: Self-contained API client for frankfurter.app. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -12,5 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
-
+    tibble,
+    tidyr

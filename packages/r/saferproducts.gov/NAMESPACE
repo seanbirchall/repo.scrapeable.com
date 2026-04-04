@@ -1,0 +1,18 @@
+# Hand-maintained NAMESPACE
+
+export(safer_list)
+export(safer_search)
+export(safer_penalties)
+export(safer_penalty_search)
+export(safer_penalties_by_year)
+export(safer_recall)
+export(safer_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, URLencode)

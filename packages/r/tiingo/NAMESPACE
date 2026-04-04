@@ -1,0 +1,15 @@
+# Auto-generated NAMESPACE
+
+export(tiingo_prices)
+export(tiingo_prices_today)
+export(tiingo_intraday)
+export(tiingo_meta)
+export(tiingo_tickers)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

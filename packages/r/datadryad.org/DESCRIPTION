@@ -1,8 +1,8 @@
 Package: datadryad.org
-Title: Dryad Research Data Repository Client
+Title: API Client for datadryad.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Dryad API. List and fetch research datasets.
+Description: Self-contained API client for datadryad.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

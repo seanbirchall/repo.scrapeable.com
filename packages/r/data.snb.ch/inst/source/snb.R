@@ -1,3 +1,6 @@
+
+
+
 # data-snb-ch.R
 # Self-contained Swiss National Bank (SNB) data portal client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,43 +9,11 @@
 # Auth: none required
 # Rate limits: unknown, be courteous
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 .ua <- "support@scrapeable.com"
 .snb_base <- "https://data.snb.ch/api/cube"
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
 
 .fetch <- function(url, ext = ".csv") {
   tmp <- tempfile(fileext = ext)
@@ -78,6 +49,7 @@ library(tibble)
   dimension = character(), code = character(), label = character()
 )
 
+
 # == Data =====================================================================
 
 #' Fetch data from an SNB data cube
@@ -86,6 +58,7 @@ library(tibble)
 #'   "rendopar" for interest rates, "devkum" for exchange rates)
 #' @param lang Language: "en" (default), "de", "fr", "it"
 #' @return tibble with date and value columns (structure varies by cube)
+#' @export
 snb_data <- function(cube_id, lang = "en") {
   url <- sprintf("%s/%s/data/csv/%s", .snb_base, cube_id, lang)
   df <- tryCatch(.fetch_snb_csv(url), error = function(e) NULL)
@@ -130,6 +103,7 @@ snb_data <- function(cube_id, lang = "en") {
 #' @param cube_id Cube ID (e.g. "snbbipo", "rendopar", "devkum")
 #' @param lang Language: "en" (default), "de", "fr", "it"
 #' @return tibble: dimension (character), code (character), label (character)
+#' @export
 snb_dimensions <- function(cube_id, lang = "en") {
   url <- sprintf("%s/%s/dimensions/csv/%s", .snb_base, cube_id, lang)
   df <- tryCatch({
@@ -150,26 +124,48 @@ snb_dimensions <- function(cube_id, lang = "en") {
     label = if (length(label_col) > 0) as.character(df[[label_col[1]]]) else NA_character_
   )
 }
+`%||%` <- function(x, y) if (is.null(x)) y else x
 
 # == Context ===================================================================
 
-#' Show SNB API context for LLMs
+#' Generate LLM-friendly context for data.snb.ch
 #'
-#' Displays package overview, common cube IDs, and function signatures.
-#' @return Invisibly returns the context string
+#' @return Character string with full function signatures and bodies
+#' @export
 snb_context <- function() {
-  .build_context(
-    "data.snb.ch",
-    header_lines = c(
-      "# data.snb.ch",
-      "# Swiss National Bank data portal client",
-      "# Auth: none required",
-      "#",
-      "# Common cubes: snbbipo (balance of payments), rendopar (interest rates),",
-      "#   devkum (exchange rates), snbbipc (current account),",
-      "#   snbgeldmengen (monetary aggregates)"
-    )
-  )
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.snb.ch.R"
+  if (!file.exists(src_file)) {
+    cat("# data.snb.ch context - source not found\n")
+    return(invisible("# data.snb.ch context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
 
-`%||%` <- function(x, y) if (is.null(x)) y else x

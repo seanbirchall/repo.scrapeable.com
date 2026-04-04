@@ -1,8 +1,8 @@
 Package: ebi.ac.uk
-Title: UniProt Proteins API Client (via EBI)
+Title: API Client for ebi.ac.uk
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the EBI UniProt Proteins API. Fetch and search protein entries by accession or gene name.
+Description: Self-contained API client for ebi.ac.uk. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -1,0 +1,17 @@
+# Hand-maintained NAMESPACE
+
+export(cran_search)
+export(cran_package)
+export(cran_downloads)
+export(cran_top)
+export(cran_deps)
+export(cran_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

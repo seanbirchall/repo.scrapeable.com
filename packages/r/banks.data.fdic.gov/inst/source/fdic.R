@@ -1,3 +1,6 @@
+
+
+
 # banks-data-fdic-gov.R
 # Self-contained FDIC BankFind Suite API client.
 # All public functions return tibbles. All columns properly typed.
@@ -6,8 +9,6 @@
 # Auth: none required
 # Rate limits: unknown (be polite)
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
@@ -15,39 +16,6 @@ library(tibble)
 .fdic_base <- "https://banks.data.fdic.gov/api"
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
-
-# -- Context generator (reads roxygen + signatures from inst/source/) ----------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1
-    rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n")
-  invisible(out)
-}
-
 # -- Fetch helpers -------------------------------------------------------------
 
 .fetch <- function(url, ext = ".json") {
@@ -81,6 +49,7 @@ library(tibble)
 
 # == Institutions ==============================================================
 
+
 #' Fetch FDIC-insured institution data
 #'
 #' Query the FDIC BankFind institutions endpoint. Returns bank
@@ -91,6 +60,7 @@ library(tibble)
 #' @param limit Max results (default 100, max 10000)
 #' @param offset Pagination offset (default 0)
 #' @return tibble: cert, name, city, state, zip, active, class, total_assets
+#' @export
 fdic_institutions <- function(state = NULL, active = 1, limit = 100,
                               offset = 0) {
   filters <- character()
@@ -133,6 +103,7 @@ fdic_institutions <- function(state = NULL, active = 1, limit = 100,
 #' @param limit Max results (default 20)
 #' @param offset Pagination offset (default 0)
 #' @return tibble: cert, repdte, asset, dep, netinc, roa, roe, equity
+#' @export
 fdic_financials <- function(cert, limit = 20, offset = 0) {
   url <- sprintf(
     "%s/financials?filters=CERT:%d&fields=CERT,REPDTE,ASSET,DEP,NETINC,ROA,ROE,EQ&sort_by=REPDTE&sort_order=DESC&limit=%d&offset=%d",
@@ -165,6 +136,7 @@ fdic_financials <- function(cert, limit = 20, offset = 0) {
 #' @param name Bank name or partial name (e.g. "Goldman", "Chase")
 #' @param limit Max results (default 25)
 #' @return tibble: cert, name, city, state, active
+#' @export
 fdic_search <- function(name, limit = 25) {
   url <- sprintf(
     "%s/institutions?search=INSTNAME:%s&fields=CERT,INSTNAME,CITY,STALP,ACTIVE&limit=%d",
@@ -192,6 +164,7 @@ fdic_search <- function(name, limit = 25) {
 #' Generate LLM-friendly context for the banks.data.fdic.gov package
 #'
 #' @return Character string (invisibly), also printed
+#' @export
 fdic_context <- function() {
   .build_context("banks.data.fdic.gov", header_lines = c(
     "# banks.data.fdic.gov - FDIC BankFind Suite API Client for R",
@@ -203,3 +176,47 @@ fdic_context <- function() {
     "# Popular CERTs: 3850 (Goldman Sachs), 628 (JPMorgan Chase), 3510 (Citibank)"
   ))
 }
+
+# == Context ===================================================================
+
+#' Generate LLM-friendly context for banks.data.fdic.gov
+#'
+#' @return Character string with full function signatures and bodies
+#' @export
+banks_context <- function() {
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/banks.data.fdic.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# banks.data.fdic.gov context - source not found\n")
+    return(invisible("# banks.data.fdic.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
+}
+

@@ -1,0 +1,13 @@
+# Auto-generated NAMESPACE
+
+export(places_query)
+export(places_states)
+export(places_context)
+
+import(dplyr)
+importFrom(tibble, tibble)
+importFrom(tibble, as_tibble)
+importFrom(httr2, request)
+importFrom(httr2, req_headers)
+importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)

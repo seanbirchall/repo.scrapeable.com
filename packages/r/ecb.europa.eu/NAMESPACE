@@ -1,14 +1,19 @@
-export(ecb_bond_yield)
-export(ecb_context)
+# Hand-maintained NAMESPACE
+
+export(ecb_get)
 export(ecb_exchange_rate)
 export(ecb_exchange_rates)
-export(ecb_get)
-export(ecb_inflation)
 export(ecb_key_rates)
+export(ecb_bond_yield)
 export(ecb_money_supply)
+export(ecb_inflation)
+export(ecb_context)
+
 import(dplyr)
 importFrom(tibble, tibble)
 importFrom(tibble, as_tibble)
 importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
+importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -1,6 +1,8 @@
 # Hand-maintained NAMESPACE
 
 export(otopo_catalog)
+export(otopo_global_datasets)
+export(otopo_search)
 export(otopo_context)
 
 import(dplyr)
@@ -10,3 +12,4 @@ importFrom(httr2, request)
 importFrom(httr2, req_headers)
 importFrom(httr2, req_perform)
 importFrom(jsonlite, fromJSON)
+importFrom(utils, read.csv)

@@ -1,3 +1,10 @@
+# data.bls.gov.R
+# Self-contained data.bls.gov client.
+# All public functions return tibbles.
+#
+# Dependencies: httr2, jsonlite, dplyr, tibble
+
+
 # bls-gov.R
 # Self-contained Bureau of Labor Statistics API v2 client.
 # All public functions return tibbles with typed columns.
@@ -8,45 +15,12 @@
 #   Register at https://data.bls.gov/registrationEngine/
 # Docs: https://www.bls.gov/developers/api_signature_v2.htm
 
-library(dplyr, warn.conflicts = FALSE)
-library(tibble)
 
 # == Private utilities =========================================================
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 .ua <- "support@scrapeable.com"
 .bls_base <- "https://api.bls.gov/publicAPI/v2/timeseries/data/"
-
-# -- Context generator ---------------------------------------------------------
-
-.build_context <- function(pkg_name, src_file = NULL, header_lines = character()) {
-  if (is.null(src_file)) {
-    src_dir <- system.file("source", package = pkg_name)
-    if (src_dir == "") return(paste(c(header_lines, "# Source not found."), collapse = "\n"))
-    src_files <- list.files(src_dir, pattern = "[.]R$", full.names = TRUE)
-    if (length(src_files) == 0) return(paste(c(header_lines, "# No R source."), collapse = "\n"))
-    src_file <- src_files[1]
-  }
-  lines <- readLines(src_file, warn = FALSE)
-  n <- length(lines)
-  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
-  blocks <- list()
-  for (fi in fn_indices) {
-    fn_name <- sub(" <- function[(].*", "", lines[fi])
-    if (startsWith(fn_name, ".")) next
-    j <- fi - 1; rox_start <- fi
-    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
-    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
-    rox <- rox[!grepl("^#' @export|^#' @keywords", rox)]
-    sig <- lines[fi]; k <- fi
-    while (!grepl("[{]\\s*$", sig) && k < min(fi + 15, n)) { k <- k + 1; sig <- paste(sig, trimws(lines[k])) }
-    sig <- sub("\\s*[{]\\s*$", "", sig)
-    blocks[[length(blocks) + 1]] <- c(rox, sig, sprintf("  Run `%s` to view source or `?%s` for help.", fn_name, fn_name), "")
-  }
-  out <- paste(c(header_lines, "#", "# == Functions ==", "#", unlist(blocks)), collapse = "\n")
-  cat(out, "\n"); invisible(out)
-}
-
 # -- Fetch helper --------------------------------------------------------------
 
 .bls_post <- function(body, key = NULL) {
@@ -84,6 +58,7 @@ library(tibble)
 )
 
 
+
 # == Core data fetching ========================================================
 
 #' Fetch BLS time series data
@@ -98,6 +73,7 @@ library(tibble)
 #' @param key Optional BLS API registration key
 #' @param catalog If TRUE and key provided, include series metadata
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_series <- function(series, start_year = NULL, end_year = NULL,
                        key = NULL, catalog = FALSE) {
   if (is.null(end_year)) end_year <- as.integer(format(Sys.Date(), "%Y"))
@@ -155,6 +131,7 @@ bls_series <- function(series, start_year = NULL, end_year = NULL,
 #' @param key Optional API key
 #' @param sleep Seconds between chunk requests (default 1)
 #' @return tibble: same schema as bls_series
+#' @export
 bls_series_bulk <- function(series, start_year = NULL, end_year = NULL,
                             key = NULL, sleep = 1) {
   chunk_size <- if (!is.null(key)) 50L else 25L
@@ -184,6 +161,7 @@ bls_series_bulk <- function(series, start_year = NULL, end_year = NULL,
 #' @param key BLS API registration key (required for catalog)
 #' @return tibble: series_id, series_title, survey_name, survey_abbreviation,
 #'   seasonal, area_code, area_name, item_code, item_name
+#' @export
 bls_catalog <- function(series, key) {
   body <- list(
     seriesid = as.list(series),
@@ -223,6 +201,7 @@ bls_catalog <- function(series, key) {
 #' @param key Optional API key
 #' @param seasonal "S" for seasonally adjusted (default), "U" for unadjusted
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_cpi <- function(start_year = NULL, end_year = NULL, key = NULL,
                     seasonal = "S") {
   sid <- if (seasonal == "S") "CUSR0000SA0" else "CUUR0000SA0"
@@ -235,6 +214,7 @@ bls_cpi <- function(start_year = NULL, end_year = NULL, key = NULL,
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_unemployment <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("LNS14000000", start_year, end_year, key)
 }
@@ -245,6 +225,7 @@ bls_unemployment <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_payrolls <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("CES0000000001", start_year, end_year, key)
 }
@@ -255,6 +236,7 @@ bls_payrolls <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_earnings <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("CES0500000003", start_year, end_year, key)
 }
@@ -265,6 +247,7 @@ bls_earnings <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_ppi <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("WPUFD4", start_year, end_year, key)
 }
@@ -275,6 +258,7 @@ bls_ppi <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_eci <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("CIS1010000000000A", start_year, end_year, key)
 }
@@ -285,6 +269,7 @@ bls_eci <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param end_year End year
 #' @param key Optional API key
 #' @return tibble: series_id, year, period, period_name, value, date
+#' @export
 bls_jolts <- function(start_year = NULL, end_year = NULL, key = NULL) {
   bls_series("JTS000000000000000JOL", start_year, end_year, key)
 }
@@ -302,6 +287,7 @@ bls_jolts <- function(start_year = NULL, end_year = NULL, key = NULL) {
 #' @param key Optional API key (recommended to avoid rate limits)
 #' @return tibble: series_id, year, period, period_name, value, date,
 #'   plus indicator (human-readable name)
+#' @export
 bls_indicators <- function(start_year = NULL, end_year = NULL, key = NULL) {
   ids <- c(
     "CUSR0000SA0",              # CPI-U (seasonally adjusted)
@@ -324,26 +310,44 @@ bls_indicators <- function(start_year = NULL, end_year = NULL, key = NULL) {
 
 # == Context ===================================================================
 
-#' Generate LLM-friendly context for the data.bls.gov package
+#' Generate LLM-friendly context for data.bls.gov
 #'
-#' @return Character string (invisibly), also printed
+#' @return Character string with full function signatures and bodies
+#' @export
 bls_context <- function() {
-  .build_context("data.bls.gov", header_lines = c(
-    "# data.bls.gov - Bureau of Labor Statistics API v2 Client for R",
-    "# Dependencies: httr2, jsonlite, dplyr, tibble",
-    "# Auth: optional registrationKey (25 req/day without, 500/day with)",
-    "# All functions return tibbles with typed columns.",
-    "#",
-    "# Popular series IDs:",
-    "#   CUUR0000SA0    = CPI-U All Items (unadjusted)",
-    "#   CUSR0000SA0    = CPI-U All Items (seasonally adjusted)",
-    "#   LNS14000000    = Unemployment Rate",
-    "#   CES0000000001  = Total Nonfarm Payrolls",
-    "#   CES0500000003  = Avg Hourly Earnings (private)",
-    "#   WPUFD4         = PPI All Commodities",
-    "#   JTS000000000000000JOL = JOLTS Job Openings",
-    "#",
-    "# Series ID format: {survey_prefix}{seasonal}{area}{item}",
-    "#   CU = CPI, LN = Labor Force, CE = Employment, WP = PPI, JT = JOLTS"
-  ))
+  src_file <- NULL
+  tryCatch(src_file <- sys.frame(1)$ofile, error = function(e) NULL)
+  if (is.null(src_file) || !file.exists(src_file)) {
+    tryCatch({
+      f <- sys.frame(0)$ofile
+      if (!is.null(f) && file.exists(f)) src_file <<- f
+    }, error = function(e) NULL)
+  }
+  if (is.null(src_file)) src_file <- "clients/data.bls.gov.R"
+  if (!file.exists(src_file)) {
+    cat("# data.bls.gov context - source not found\n")
+    return(invisible("# data.bls.gov context - source not found"))
+  }
+  lines <- readLines(src_file, warn = FALSE)
+  n <- length(lines)
+  fn_indices <- grep("^([a-zA-Z][a-zA-Z0-9_.]*) <- function[(]", lines)
+  blocks <- list()
+  for (fi in fn_indices) {
+    fn_name <- sub(" <- function[(].*", "", lines[fi])
+    if (startsWith(fn_name, ".")) next
+    j <- fi - 1; rox_start <- fi
+    while (j > 0 && grepl("^#'", lines[j])) { rox_start <- j; j <- j - 1 }
+    rox <- if (rox_start < fi) lines[rox_start:(fi - 1)] else character()
+    depth <- 0; end_line <- fi
+    for (k in fi:n) {
+      depth <- depth + nchar(gsub("[^{]", "", lines[k])) - nchar(gsub("[^}]", "", lines[k]))
+      if (depth == 0 && k >= fi) { end_line <- k; break }
+    }
+    body <- lines[fi:end_line]
+    blocks[[length(blocks) + 1]] <- c(rox, body, "")
+  }
+  out <- paste(unlist(blocks), collapse = "\n")
+  cat(out, "\n")
+  invisible(out)
 }
+

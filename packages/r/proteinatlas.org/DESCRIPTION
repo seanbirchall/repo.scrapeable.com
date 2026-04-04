@@ -1,8 +1,8 @@
 Package: proteinatlas.org
-Title: Human Protein Atlas API Client
+Title: API Client for proteinatlas.org
 Version: 0.1.0
 Authors@R: person("Sean", "B", role = c("aut", "cre"), email = "support@scrapeable.com")
-Description: Self-contained client for the Human Protein Atlas API. Search genes and retrieve protein expression data.
+Description: Self-contained API client for proteinatlas.org. All functions return tibbles.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -12,4 +12,5 @@ Imports:
     httr2,
     jsonlite,
     dplyr,
-    tibble
+    tibble,
+    tidyr
