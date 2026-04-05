@@ -314,7 +314,7 @@ philart_context <- function() {
     if (!is.null(src)) src_file <<- src$filename
   }, error = function(e) NULL)
   if (is.null(src_file) || !file.exists(src_file)) src_file <- "clients/philart.net.R"
-  if (is.null(src_file) || !file.exists(src_file)) {
+  if (!file.exists(src_file)) {
     pkg_src <- system.file("source", package = "philart.net")
     if (nzchar(pkg_src)) {
       sf <- list.files(pkg_src, pattern = "[.]R$", full.names = TRUE)

@@ -4,7 +4,6 @@
 
 # == Setup =====================================================================
 
-if (!exists("http_get", mode = "function")) source("clients/_helpers.R")
 
 # == Symbol search =============================================================
 
@@ -28,6 +27,25 @@ if (!exists("http_get", mode = "function")) source("clients/_helpers.R")
 #' tv_search("AAPL")
 #' tv_search("bitcoin")
 #' @export
+
+# -- HTTP helpers (inlined) ----------------------------------------------------
+http_get <- function(url, ext = ".html", ua = "support@scrapeable.com") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = ua) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
+
+http_post <- function(url, body, ext = ".zip", ua = "support@scrapeable.com") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = ua) |>
+    httr2::req_body_json(body) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
+
 tv_search <- function(query) {
   url <- paste0("https://symbol-search.tradingview.com/symbol_search/v3/?text=",
                 utils::URLencode(query))

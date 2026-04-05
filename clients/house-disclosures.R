@@ -6,7 +6,25 @@
 
 # == Setup =====================================================================
 
-if (!exists("http_get", mode = "function")) source("clients/_helpers.R")
+
+
+# -- HTTP helpers (inlined) ----------------------------------------------------
+http_get <- function(url, ext = ".html", ua = "support@scrapeable.com") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = ua) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
+
+http_post <- function(url, body, ext = ".zip", ua = "support@scrapeable.com") {
+  tmp <- tempfile(fileext = ext)
+  httr2::request(url) |>
+    httr2::req_headers(`User-Agent` = ua) |>
+    httr2::req_body_json(body) |>
+    httr2::req_perform(path = tmp)
+  tmp
+}
 
 .hd_base <- "https://disclosures-clerk.house.gov"
 .hd_get <- function(url, ext = ".html") http_get(url, ext)

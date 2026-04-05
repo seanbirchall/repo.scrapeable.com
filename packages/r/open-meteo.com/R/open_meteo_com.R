@@ -295,7 +295,7 @@ meteo_context <- function() {
     if (!is.null(src)) src_file <<- src$filename
   }, error = function(e) NULL)
   if (is.null(src_file) || !file.exists(src_file)) src_file <- "clients/open-meteo.com.R"
-  if (is.null(src_file) || !file.exists(src_file)) {
+  if (!file.exists(src_file)) {
     pkg_src <- system.file("source", package = "open-meteo.com")
     if (nzchar(pkg_src)) {
       sf <- list.files(pkg_src, pattern = "[.]R$", full.names = TRUE)

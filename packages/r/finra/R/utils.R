@@ -5,7 +5,6 @@
 #' @keywords internal
 NULL
 
-# Inlined from _helpers.R
 http_get <- function(url, ext = ".html", ua = "support@scrapeable.com") {
   tmp <- tempfile(fileext = ext)
   httr2::request(url) |>
